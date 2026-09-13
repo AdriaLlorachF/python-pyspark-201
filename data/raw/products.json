@@ -1,0 +1,362 @@
+[
+  {
+    "productId": "P001",
+    "name": "Producto 001",
+    "category": "sports",
+    "listPrice": "233.51"
+  },
+  {
+    "productId": "P002",
+    "name": "Producto 002",
+    "category": "books",
+    "listPrice": "133.48"
+  },
+  {
+    "productId": "P003",
+    "name": "Producto 003",
+    "category": "home",
+    "listPrice": "84.17"
+  },
+  {
+    "productId": "P004",
+    "name": "Producto 004",
+    "category": "electronics",
+    "listPrice": "250.06"
+  },
+  {
+    "productId": "P005",
+    "name": "Producto 005",
+    "category": "sports",
+    "listPrice": "87.27"
+  },
+  {
+    "productId": "P006",
+    "name": "Producto 006",
+    "category": "sports",
+    "listPrice": "76.93"
+  },
+  {
+    "productId": "P007",
+    "name": "Producto 007",
+    "category": "sports",
+    "listPrice": ""
+  },
+  {
+    "productId": "P008",
+    "name": "Producto 008",
+    "category": "sports",
+    "listPrice": "104.23"
+  },
+  {
+    "productId": "P009",
+    "name": "Producto 009",
+    "category": "home",
+    "listPrice": "256.02"
+  },
+  {
+    "productId": "P010",
+    "name": "Producto 010",
+    "category": "fashion",
+    "listPrice": "148.82"
+  },
+  {
+    "productId": "P011",
+    "name": "Producto 011",
+    "category": "fashion",
+    "listPrice": "240.35"
+  },
+  {
+    "productId": "P012",
+    "name": "Producto 012",
+    "category": "books",
+    "listPrice": "87.49"
+  },
+  {
+    "productId": "P013",
+    "name": "Producto 013",
+    "category": "fashion",
+    "listPrice": "211.84"
+  },
+  {
+    "productId": "P014",
+    "name": "Producto 014",
+    "category": "books",
+    "listPrice": "168.95"
+  },
+  {
+    "productId": "P015",
+    "name": "Producto 015",
+    "category": "electronics",
+    "listPrice": "284.67"
+  },
+  {
+    "productId": "P016",
+    "name": "Producto 016",
+    "category": "sports",
+    "listPrice": "76.19"
+  },
+  {
+    "productId": "P017",
+    "name": "Producto 017",
+    "category": "home",
+    "listPrice": "149.12"
+  },
+  {
+    "productId": "P018",
+    "name": "Producto 018",
+    "category": "sports",
+    "listPrice": "208.72"
+  },
+  {
+    "productId": "P019",
+    "name": "Producto 019",
+    "category": "electronics",
+    "listPrice": ""
+  },
+  {
+    "productId": "P020",
+    "name": "Producto 020",
+    "category": "home",
+    "listPrice": "32.44"
+  },
+  {
+    "productId": "P021",
+    "name": "Producto 021",
+    "category": "home",
+    "listPrice": "124.29"
+  },
+  {
+    "productId": "P022",
+    "name": "Producto 022",
+    "category": "books",
+    "listPrice": "95.32"
+  },
+  {
+    "productId": "P023",
+    "name": "Producto 023",
+    "category": "books",
+    "listPrice": "113.85"
+  },
+  {
+    "productId": "P024",
+    "name": "Producto 024",
+    "category": "sports",
+    "listPrice": "161.61"
+  },
+  {
+    "productId": "P025",
+    "name": "Producto 025",
+    "category": "books",
+    "listPrice": "299.00"
+  },
+  {
+    "productId": "P026",
+    "name": "Producto 026",
+    "category": "sports",
+    "listPrice": "102.57"
+  },
+  {
+    "productId": "P027",
+    "name": "Producto 027",
+    "category": "fashion",
+    "listPrice": "84.91"
+  },
+  {
+    "productId": "P028",
+    "name": "Producto 028",
+    "category": "home",
+    "listPrice": "73.00"
+  },
+  {
+    "productId": "P029",
+    "name": "Producto 029",
+    "category": "books",
+    "listPrice": "98.08"
+  },
+  {
+    "productId": "P030",
+    "name": "Producto 030",
+    "category": "home",
+    "listPrice": "285.50"
+  },
+  {
+    "productId": "P031",
+    "name": "Producto 031",
+    "category": "sports",
+    "listPrice": "61.49"
+  },
+  {
+    "productId": "P032",
+    "name": "Producto 032",
+    "category": "books",
+    "listPrice": "86.56"
+  },
+  {
+    "productId": "P033",
+    "name": "Producto 033",
+    "category": "books",
+    "listPrice": "293.09"
+  },
+  {
+    "productId": "P034",
+    "name": "Producto 034",
+    "category": "electronics",
+    "listPrice": "181.04"
+  },
+  {
+    "productId": "P035",
+    "name": "Producto 035",
+    "category": "fashion",
+    "listPrice": "250.62"
+  },
+  {
+    "productId": "P036",
+    "name": "Producto 036",
+    "category": "home",
+    "listPrice": "72.10"
+  },
+  {
+    "productId": "P037",
+    "name": "Producto 037",
+    "category": "books",
+    "listPrice": "94.16"
+  },
+  {
+    "productId": "P038",
+    "name": "Producto 038",
+    "category": "electronics",
+    "listPrice": "42.33"
+  },
+  {
+    "productId": "P039",
+    "name": "Producto 039",
+    "category": "books",
+    "listPrice": "292.41"
+  },
+  {
+    "productId": "P040",
+    "name": "Producto 040",
+    "category": "home",
+    "listPrice": "91.17"
+  },
+  {
+    "productId": "P041",
+    "name": "Producto 041",
+    "category": "sports",
+    "listPrice": "193.16"
+  },
+  {
+    "productId": "P042",
+    "name": "Producto 042",
+    "category": "electronics",
+    "listPrice": ""
+  },
+  {
+    "productId": "P043",
+    "name": "Producto 043",
+    "category": "sports",
+    "listPrice": "174.34"
+  },
+  {
+    "productId": "P044",
+    "name": "Producto 044",
+    "category": "fashion",
+    "listPrice": "146.21"
+  },
+  {
+    "productId": "P045",
+    "name": "Producto 045",
+    "category": "electronics",
+    "listPrice": "59.38"
+  },
+  {
+    "productId": "P046",
+    "name": "Producto 046",
+    "category": "sports",
+    "listPrice": "79.47"
+  },
+  {
+    "productId": "P047",
+    "name": "Producto 047",
+    "category": "electronics",
+    "listPrice": "38.65"
+  },
+  {
+    "productId": "P048",
+    "name": "Producto 048",
+    "category": "electronics",
+    "listPrice": "123.20"
+  },
+  {
+    "productId": "P049",
+    "name": "Producto 049",
+    "category": "electronics",
+    "listPrice": "175.21"
+  },
+  {
+    "productId": "P050",
+    "name": "Producto 050",
+    "category": "books",
+    "listPrice": "49.75"
+  },
+  {
+    "productId": "P051",
+    "name": "Producto 051",
+    "category": "electronics",
+    "listPrice": "284.98"
+  },
+  {
+    "productId": "P052",
+    "name": "Producto 052",
+    "category": "electronics",
+    "listPrice": "298.20"
+  },
+  {
+    "productId": "P053",
+    "name": "Producto 053",
+    "category": "sports",
+    "listPrice": "169.62"
+  },
+  {
+    "productId": "P054",
+    "name": "Producto 054",
+    "category": "books",
+    "listPrice": "183.85"
+  },
+  {
+    "productId": "P055",
+    "name": "Producto 055",
+    "category": "books",
+    "listPrice": "71.57"
+  },
+  {
+    "productId": "P056",
+    "name": "Producto 056",
+    "category": "sports",
+    "listPrice": "117.20"
+  },
+  {
+    "productId": "P057",
+    "name": "Producto 057",
+    "category": "books",
+    "listPrice": "92.71"
+  },
+  {
+    "productId": "P058",
+    "name": "Producto 058",
+    "category": "fashion",
+    "listPrice": "297.05"
+  },
+  {
+    "productId": "P059",
+    "name": "Producto 059",
+    "category": "electronics",
+    "listPrice": "172.74"
+  },
+  {
+    "productId": "P060",
+    "name": "Producto 060",
+    "category": "electronics",
+    "listPrice": "184.83"
+  }
+]
