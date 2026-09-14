@@ -227,23 +227,53 @@ Pandas y Spark se ven en M01. Aquí no hay DataFrames.""",
             )
         ),
         md(
-            """## Variables y tipos
+            """## Variables y tipos simples
 
 Un nombre guarda un valor. No declaras el tipo: Python lo ve en lo que asignas.
 
-Al ejecutar: cuatro `print` y los tipos `str`, `int`, `float`, `bool`."""
+Al ejecutar: `str`, `int`, `float`, `bool`."""
         ),
         code(
             """# = asigna. == compara (más abajo).
-pedido = "O90001"       # texto
-unidades = 3            # entero
-precio = 19.90          # decimal
-cobrado = True          # True / False (mayúscula)
+pedido = "O90001"       # str  — texto
+unidades = 3            # int  — entero
+precio = 19.90          # float — decimal
+cobrado = True          # bool — True / False (mayúscula)
 
 print(pedido, type(pedido))
 print(unidades, type(unidades))
 print(precio, type(precio))
 print(cobrado, type(cobrado))"""
+        ),
+        md(
+            """## Tipos compuestos
+
+Un compuesto **agrupa** varios valores. El tipo del objeto entero es `list`, `tuple`, `dict` o `set`; lo de dentro puede ser de otro tipo (una lista de `str`, un dict de `str` → `float`).
+
+| Tipo | Se escribe | Qué es | ¿Se puede cambiar? |
+|------|------------|--------|---------------------|
+| `list` | `[a, b, c]` | Secuencia ordenada | Sí (`append`, `lista[0] = …`) |
+| `tuple` | `(a, b)` o `a, b` | Secuencia ordenada, fija | No (inmutable) |
+| `dict` | `{"k": v}` | Clave → valor | Sí |
+| `set` | `{a, b}` | Conjunto **sin duplicados** y sin orden | Sí |
+
+Al ejecutar, `type(...)` debe decir exactamente esos cuatro nombres. Fíjate: `{1, 2}` es un `set`; `{"a": 1}` es un `dict` (lleva `:`)."""
+        ),
+        code(
+            """estados = ["paid", "cancelled", "pending"]          # list
+punto = ("WEB", "app")                                # tuple
+pedido = {"order_id": "O1", "amount": 10.0}           # dict
+canales = {"web", "app", "store", "web"}              # set (el "web" repetido se pierde)
+
+print("list ", type(estados), estados)
+print("tuple", type(punto), punto)
+print("dict ", type(pedido), pedido)
+print("set  ", type(canales), canales)  # un solo "web"
+
+print("primer estado:", estados[0])
+print("amount:", pedido["amount"])
+print("cuántos estados:", len(estados))
+print("app está en la tupla?", "app" in punto)"""
         ),
         md(
             """## `print`, comentarios, f-strings
@@ -288,33 +318,57 @@ else:
     print("otro estado:", status)"""
         ),
         md(
-            """## Listas
+            """## Listas (usarlas)
 
-Una lista es una secuencia ordenada: `[a, b, c]`. Índice desde **0**. En Spark casi no las recorres fila a fila; sí las ves al montar un ejemplo pequeño (`Row(...)` varias veces)."""
+Índice desde **0**. `append` añade al final. En Spark casi no recorres filas con `for`; sí montas listas cortas de `Row(...)`."""
         ),
         code(
             """estados = ["paid", "cancelled", "pending"]
 print("primero:", estados[0])
-print("cuántos:", len(estados))
-print("cancelled está?", "cancelled" in estados)
+print("último:", estados[-1])
+print("trozo [0:2]:", estados[0:2])  # paid, cancelled (sin el 2)
 
-estados.append("refunded")  # añade al final
+estados.append("refunded")
 for s in estados:
     print("estado:", s)"""
         ),
         md(
-            """## Diccionarios
+            """## Tuplas
 
-Un dict es clave → valor. En Pandas una fila parece un dict. En Spark usamos `Row(campo=valor)`, misma idea: nombres de columna."""
+Como una lista, pero **no** le puedes hacer `append` ni `punto[0] = "x"`. Aparecen al devolver dos valores (`a, b = …`) y en APIs (`isin(("web", "app"))` en Spark es “¿está en esta tupla?”)."""
+        ),
+        code(
+            """punto = ("WEB", "app")
+print(punto[0], len(punto))
+a, b = punto  # desempaquetar
+print(a, b)
+# punto.append("store")  # AttributeError si lo descomentas"""
+        ),
+        md(
+            """## Diccionarios (usarlos)
+
+Clave → valor. En Pandas una fila parece un dict. En Spark, `Row(campo=valor)` es la misma idea."""
         ),
         code(
             """pedido = {"order_id": "O1", "status": "paid", "amount": 10.0}
 print(pedido["order_id"])
 print(list(pedido.keys()))
+pedido["channel"] = "web"  # alta o pisa
 
-# Recorrer pares
 for clave, valor in pedido.items():
     print(clave, "=", valor)"""
+        ),
+        md(
+            """## Sets
+
+Útiles para “valores únicos” y para `in` rápido. No hay `canales[0]`: no hay posición."""
+        ),
+        code(
+            """canales = {"web", "app", "store", "web"}
+print(canales)
+canales.add("other")
+print("marketplace" in canales)  # False
+print(canales & {"web", "marketplace"})  # intersección: {'web'}"""
         ),
         md(
             """## Texto: lo que más ensucia un CSV
@@ -363,13 +417,14 @@ Un `for` sobre todas las filas (`for row in df.collect():`) baja todo al driver 
 
 ## Mini chequeo
 
-Ejecuta la celda. Debes ver `True` tres veces. Si no, repasa `==`, `None` y el dict."""
+Ejecuta la celda. Debes ver `True` cuatro veces. Si no, repasa tipos simples, `list` y `dict`."""
         ),
         code(
             """ok_tipos = type(3.14) is float
 ok_none = None is None
+ok_list = type(["paid", "pending"]) is list
 ok_dict = {"a": 1}["a"] == 1
-print(ok_tipos, ok_none, ok_dict)"""
+print(ok_tipos, ok_none, ok_list, ok_dict)"""
         ),
         md(
             """**Siguiente:** [M01 — teoría](../M01-fundamentos-entorno/01-teoria.ipynb) (Pandas vs Spark, mismas cinco filas)."""

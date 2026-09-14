@@ -33,7 +33,7 @@ Antes de Spark: el cuaderno, el fork y el Codespace. Así trabajas el resto del 
 - Qué es un notebook (celdas Markdown y de código) y cómo ejecutarlo.
 - Fork del repo y arranque del Codespace (Java 17, PySpark, kernel **Python (NovaShop)**).
 - Laboratorio: creas `notebooks/trabajo/M00-01-mi-primer-notebook.ipynb` y compruebas rutas y dataset.
-- Recordatorio de Python (si no tienes base): variables, listas, dicts, `if`, `None`, `import`.
+- Recordatorio de Python (si no tienes base): tipos simples y compuestos (`list`, `tuple`, `dict`, `set`), `if`, `None`, `import`.
 
 → [teoría](notebooks/M00-entorno-notebooks/01-teoria.ipynb) · [lab](notebooks/M00-entorno-notebooks/02-lab-primer-notebook.ipynb) · [Python de bolsillo](notebooks/M00-entorno-notebooks/03-python-recordatorio.ipynb)
 
