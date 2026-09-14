@@ -1,6 +1,19 @@
 # Python para tratamiento de datos con PySpark
 
-Trabajas sobre **NovaShop** (pedidos, catálogo y eventos). Todo el curso vive en **notebooks**.
+Trabajas sobre **NovaShop** (pedidos, catálogo, eventos). Todo el curso vive en **notebooks**.
+
+Este curso es para ti si ya usas Python (y probablemente Pandas) y necesitas **escalar** el procesamiento. No se piden Big Data ni Spark de antemano.
+
+Al terminar serás capaz de:
+
+- Trabajar con PySpark de forma autónoma (`SparkSession`, DataFrames, acciones frente a transformaciones).
+- Construir pipelines completos: ingesta → transformación → salida.
+- Procesar volúmenes grandes de forma eficiente (aquí en `local[*]`) y razonar el salto a clúster.
+- Aplicar transformaciones, joins y agregaciones de negocio reales.
+- Entender el modelo de ejecución de Spark (lazy, DAG) y aplicar optimizaciones básicas (cache, particionado).
+- Dejar datos listos para analítica avanzada o machine learning.
+
+Cada concepto se introduce y se aplica en laboratorio sobre el **mismo** dominio. No hay proyecto final: el pipeline *es* la suma de los labs (carga → transformación → validación).
 
 ## Cómo va cada módulo
 
@@ -9,66 +22,148 @@ Trabajas sobre **NovaShop** (pedidos, catálogo y eventos). Todo el curso vive e
 
 Empieza por el Lab 0: entorno, fork, Codespace y qué es un notebook.
 
-Índice de ficheros: [notebooks/README.md](notebooks/README.md).
+Índice de ficheros: [notebooks/README.md](notebooks/README.md). Dataset: [data/README.md](data/README.md). Codespace: [infra/README.md](infra/README.md).
 
 ## Temario
 
 ### M00 — Entorno y notebooks
 
-Fork, Codespace, qué es un notebook (Markdown vs código) y cómo ejecutarlo.
+Antes de Spark: el cuaderno, el fork y el Codespace. Así trabajas el resto del curso.
 
-- Teoría: [01-teoria](notebooks/M00-entorno-notebooks/01-teoria.ipynb)
-- Lab: [tu primer notebook](notebooks/M00-entorno-notebooks/02-lab-primer-notebook.ipynb)
+- Qué es un notebook (celdas Markdown y de código) y cómo ejecutarlo.
+- Fork del repo y arranque del Codespace (Java 17, PySpark, kernel **Python (NovaShop)**).
+- Laboratorio: creas `notebooks/trabajo/M00-01-mi-primer-notebook.ipynb` y compruebas rutas y dataset.
+
+→ [teoría](notebooks/M00-entorno-notebooks/01-teoria.ipynb) · [lab](notebooks/M00-entorno-notebooks/02-lab-primer-notebook.ipynb)
 
 ### M01 — Fundamentos y entorno
 
-Qué es Spark y cuándo usarlo. Diferencia con Pandas. `SparkSession` y modelo de ejecución (transformación vs acción).
+Spark como motor de cómputo, no como base de datos. El puente si vienes de Pandas.
 
-- Teoría: [01-teoria](notebooks/M01-fundamentos-entorno/01-teoria.ipynb)
-- Lab: [sesión Spark y primer DataFrame](notebooks/M01-fundamentos-entorno/02-lab-sesion-spark.ipynb)
+**Contenidos**
+
+- Qué es Spark y cuándo usarlo.
+- Diferencia con el procesamiento tradicional (Pandas): RAM, índice, cuándo se calcula.
+- `SparkSession` y modelo de ejecución (transformación vs acción).
+
+**Laboratorio**
+
+- Arranque del entorno.
+- Creación (o reuso) de la sesión Spark.
+- Primer DataFrame y ejecución básica (`printSchema`, `show`, `count`).
+
+→ [teoría](notebooks/M01-fundamentos-entorno/01-teoria.ipynb) · [lab](notebooks/M01-fundamentos-entorno/02-lab-sesion-spark.ipynb)
 
 ### M02 — Ingesta y preparación de datos
 
-Lectura CSV y JSON. Quién decide nombres y tipos (Spark adivina vs tú escribes el contrato). Calidad y limpieza.
+Lees las fuentes reales de NovaShop. Quién decide nombres y tipos: Spark puede adivinarlos; para producir, escribes tú el contrato.
 
-- Teoría: [01-teoria](notebooks/M02-ingesta-preparacion/01-teoria.ipynb)
-- Labs: [ingesta CSV/JSON](notebooks/M02-ingesta-preparacion/02-lab-ingesta-csv-json.ipynb) · [schema y tipos](notebooks/M02-ingesta-preparacion/03-lab-schema-tipos.ipynb) · [calidad y limpieza](notebooks/M02-ingesta-preparacion/04-lab-calidad-limpieza.ipynb)
+**Contenidos**
+
+- Lectura de datos (CSV, JSON y JSONL).
+- Inferencia de schema frente a schema explícito.
+- Tipos de datos (string, timestamp, decimal).
+- Calidad y limpieza.
+
+**Laboratorios**
+
+- Ingesta del dataset real (clientes, pedidos, catálogo, eventos).
+- Exploración de estructura.
+- Normalización de columnas y tipos.
+- Filtrado de datos inválidos y escritura del staging.
+
+→ [teoría](notebooks/M02-ingesta-preparacion/01-teoria.ipynb) · [ingesta](notebooks/M02-ingesta-preparacion/02-lab-ingesta-csv-json.ipynb) · [schema](notebooks/M02-ingesta-preparacion/03-lab-schema-tipos.ipynb) · [calidad](notebooks/M02-ingesta-preparacion/04-lab-calidad-limpieza.ipynb)
 
 ### M03 — Transformación de datos
 
-Operaciones sobre DataFrames (`select`, `withColumn`). Filtros y expresiones. Lógica de negocio en columnas, no en un `for`.
+La regla de negocio es una **columna**, no un `for`. Enriqueces el dataset y encadenas transformaciones.
 
-- Teoría: [01-teoria](notebooks/M03-transformacion-datos/01-teoria.ipynb)
-- Labs: [enriquecimiento](notebooks/M03-transformacion-datos/02-lab-enriquecimiento.ipynb) · [reglas de negocio](notebooks/M03-transformacion-datos/03-lab-reglas-negocio.ipynb)
+**Contenidos**
+
+- Operaciones sobre DataFrames (`select`, `withColumn`).
+- Filtros y expresiones.
+- Lógica de negocio aplicada a datos (GMV, canal, cobrable).
+
+**Laboratorios**
+
+- Enriquecimiento con nuevas columnas (`gmv_line`, `order_month`).
+- Aplicación de reglas de negocio (capar descuento, normalizar canal).
+- Transformaciones encadenadas y persistencia de `fact_lines`.
+
+→ [teoría](notebooks/M03-transformacion-datos/01-teoria.ipynb) · [enriquecimiento](notebooks/M03-transformacion-datos/02-lab-enriquecimiento.ipynb) · [reglas](notebooks/M03-transformacion-datos/03-lab-reglas-negocio.ipynb)
 
 ### M04 — Integración y agregación
 
-Joins entre datasets. Agrupaciones (`groupBy`). Cálculo de métricas y segmentación.
+Cruzas fuentes y calculas métricas. Un KPI mentiroso casi siempre es un join mal elegido.
 
-- Teoría: [01-teoria](notebooks/M04-integracion-agregacion/01-teoria.ipynb)
-- Labs: [joins](notebooks/M04-integracion-agregacion/02-lab-joins.ipynb) · [KPIs](notebooks/M04-integracion-agregacion/03-lab-kpis.ipynb) · [segmentación](notebooks/M04-integracion-agregacion/04-lab-segmentacion.ipynb)
+**Contenidos**
+
+- Joins entre datasets (inner, left, anti).
+- Agrupaciones (`groupBy`).
+- Cálculo de métricas.
+
+**Laboratorios**
+
+- Integración de múltiples fuentes (clientes + ventas).
+- Cálculo de KPIs (GMV, pedidos, ticket medio, cancelación).
+- Agregaciones y métricas de negocio.
+- Segmentación de datos (`low` / `mid` / `high`).
+
+→ [teoría](notebooks/M04-integracion-agregacion/01-teoria.ipynb) · [joins](notebooks/M04-integracion-agregacion/02-lab-joins.ipynb) · [KPIs](notebooks/M04-integracion-agregacion/03-lab-kpis.ipynb) · [segmentación](notebooks/M04-integracion-agregacion/04-lab-segmentacion.ipynb)
 
 ### M05 — Análisis avanzado
 
-Window functions. Ranking y acumulados por entidad (cliente / pedido).
+`groupBy` aplasta filas. Una ventana calcula y **conserva** el detalle (pedido a pedido, cliente a cliente).
 
-- Teoría: [01-teoria](notebooks/M05-analisis-avanzado/01-teoria.ipynb)
-- Labs: [ranking](notebooks/M05-analisis-avanzado/02-lab-ranking-ventana.ipynb) · [acumulados](notebooks/M05-analisis-avanzado/03-lab-acumulados.ipynb)
+**Contenidos**
+
+- Window functions.
+- Particionado lógico de la ventana (`partitionBy` ≠ ficheros en disco).
+- Ranking y acumulados.
+
+**Laboratorio**
+
+- Análisis por entidad (cliente / usuario).
+- Ranking de resultados (top clientes, top productos).
+- Cálculo de métricas acumuladas en el tiempo.
+
+→ [teoría](notebooks/M05-analisis-avanzado/01-teoria.ipynb) · [ranking](notebooks/M05-analisis-avanzado/02-lab-ranking-ventana.ipynb) · [acumulados](notebooks/M05-analisis-avanzado/03-lab-acumulados.ipynb)
 
 ### M06 — Optimización y ejecución
 
-Evaluación lazy. Plan de ejecución (DAG). Cache y particionado.
+Sin acción no hay job. Lees el plan y decides cuándo cachear o reparticionar.
 
-- Teoría: [01-teoria](notebooks/M06-optimizacion-ejecucion/01-teoria.ipynb)
-- Labs: [explain y DAG](notebooks/M06-optimizacion-ejecucion/02-lab-explain-dag.ipynb) · [cache y particionado](notebooks/M06-optimizacion-ejecucion/03-lab-cache-particionado.ipynb)
+**Contenidos**
+
+- Evaluación lazy.
+- Plan de ejecución (DAG).
+- Uso de cache y particionado.
+
+**Laboratorio**
+
+- Inspección del plan de ejecución (`explain`, Spark UI).
+- Comparativa de rendimiento (con y sin cache).
+- Aplicación de optimizaciones básicas (`repartition`).
+
+→ [teoría](notebooks/M06-optimizacion-ejecucion/01-teoria.ipynb) · [explain](notebooks/M06-optimizacion-ejecucion/02-lab-explain-dag.ipynb) · [cache](notebooks/M06-optimizacion-ejecucion/03-lab-cache-particionado.ipynb)
 
 ### M07 — Persistencia de datos
 
-Escritura en Parquet. Organización en disco (`partitionBy`). Dataset listo para analítica.
+El pipeline acaba en un directorio que otro proceso puede leer mañana.
 
-- Teoría: [01-teoria](notebooks/M07-persistencia-datos/01-teoria.ipynb)
-- Lab: [Parquet y layout](notebooks/M07-persistencia-datos/02-lab-parquet-layout.ipynb)
+**Contenidos**
 
-## Entorno
+- Escritura en formatos eficientes (Parquet).
+- Organización de datos (`partitionBy` en disco).
+- Buenas prácticas (overwrite, prune de partición, no CSV como almacén).
 
-Codespace (Java 17 + PySpark) o local: [infra/README.md](infra/README.md). Dataset: [data/README.md](data/README.md).
+**Laboratorio**
+
+- Exportación del dataset transformado.
+- Estructuración para consumo analítico (`data/curated/sales_analytics`).
+
+→ [teoría](notebooks/M07-persistencia-datos/01-teoria.ipynb) · [lab](notebooks/M07-persistencia-datos/02-lab-parquet-layout.ipynb)
+
+## Resultado
+
+Construyes un flujo completo de procesamiento en PySpark: de las fuentes sucias de NovaShop a un Parquet analítico. Entiendes el uso práctico **y** el comportamiento interno (plan, acciones, joins), para llevarlo a un entorno profesional.
