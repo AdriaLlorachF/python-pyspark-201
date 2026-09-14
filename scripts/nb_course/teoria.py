@@ -9,48 +9,154 @@ def m01() -> list:
         md(
             teoria_head(
                 "M01 — Fundamentos y entorno",
-                """Spark es un **motor de cómputo**, no una base de datos. Pandas calcula en cada línea; Spark guarda un **plan** hasta una acción.
+                """Si vienes de Pandas, este notebook es el puente. Primero miramos un dataset **en Pandas** (cálculo inmediato, índice, RAM). Después el **mismo** dataset en PySpark (plan, acciones, sin índice).
 
-Después de este notebook creas el lab en `notebooks/trabajo/`. El guion está al lado: `02-lab-sesion-spark.ipynb`.""",
+Después creas el lab en `notebooks/trabajo/`. Guion: `02-lab-sesion-spark.ipynb`.""",
                 "../M00-entorno-notebooks/02-lab-primer-notebook.ipynb",
                 "02-lab-sesion-spark.ipynb",
             )
         ),
         *boot_cells("novashop-clase-m01"),
         md(
-            """## Pandas vs Spark
+            """## Un dataset pequeño en Pandas
 
-| | Pandas | PySpark |
-|---|--------|---------|
-| Dónde viven los datos | RAM del proceso Python | Particiones (aquí: cores del Codespace) |
-| Cuándo se calcula | En cada línea | Solo ante una **acción** |
-| Índice de filas | Sí | No |
+Cinco pedidos inventados. En Pandas cada línea **ya calcula**. Hay índice `0..4`. Todo cabe en la RAM de este proceso Python."""
+        ),
+        code(
+            """import pandas as pd
 
-Spark no “guarda” el DataFrame como un Excel. Guarda un **plan**. Hasta que no lanzas una acción, la cocina está apagada."""
+pedidos_pd = pd.DataFrame(
+    [
+        {"order_id": "O1", "status": "paid", "amount": 10.0},
+        {"order_id": "O2", "status": "cancelled", "amount": 20.0},
+        {"order_id": "O3", "status": "paid", "amount": 5.0},
+        {"order_id": "O4", "status": "paid", "amount": 15.0},
+        {"order_id": "O5", "status": "pending", "amount": 8.0},
+    ]
+)
+pedidos_pd"""
         ),
         md(
-            """## Transformación frente a acción
+            """`pedidos_pd` **es** la tabla. Si la imprimes, ves filas. El índice (columna de la izquierda) es de Pandas: Spark no tiene eso.
 
-`filter` alarga el plan. `count` y `show` lo ejecutan. Ejecuta y fíjate: el `print` del objeto no es una tabla."""
+Mira tipos y forma. `dtypes` y `shape` no lanzan ningún “job”: los datos ya están en memoria."""
+        ),
+        code(
+            """print("shape", pedidos_pd.shape)
+print(pedidos_pd.dtypes)
+print("índice:", list(pedidos_pd.index))
+pedidos_pd.describe()"""
+        ),
+        md(
+            """## Filtrar y agregar en Pandas
+
+`pedidos_pd[condición]` **devuelve otro DataFrame ya calculado**. `len(...)` y `.sum()` son números ahora mismo."""
+        ),
+        code(
+            """paid_pd = pedidos_pd[pedidos_pd["status"] == "paid"]
+print("tipo de paid_pd:", type(paid_pd))
+print("len (filas paid):", len(paid_pd))
+print("suma amount paid:", paid_pd["amount"].sum())
+paid_pd"""
+        ),
+        md(
+            """Una columna nueva se asigna y **ya está**. `groupby` aplasta filas y te deja una tabla pequeña, también inmediata."""
+        ),
+        code(
+            """pedidos_pd = pedidos_pd.copy()
+pedidos_pd["channel"] = "web"
+print(pedidos_pd[["order_id", "channel"]])
+
+pedidos_pd.groupby("status")["amount"].agg(["count", "sum"])"""
+        ),
+        md(
+            """## El mismo dataset en PySpark
+
+Mismas 5 filas. `createDataFrame` no “guarda un Excel”: guarda un **plan** que sabe cómo construir esas filas. Hasta que no lances `show` / `count`, no hay tabla en pantalla."""
         ),
         code(
             """from pyspark.sql import Row
+from pyspark.sql.functions import col, lit, sum as fsum
 
-pedidos = [
-    Row(order_id="O1", status="paid", amount=10.0),
-    Row(order_id="O2", status="cancelled", amount=20.0),
-    Row(order_id="O3", status="paid", amount=5.0),
-]
-df = spark.createDataFrame(pedidos)
-paid = df.filter(df.status == "paid")
-print("objeto filter (aún no ha contado):", paid)
-print("count (acción):", paid.count())
-df.show()"""
+pedidos_sp = spark.createDataFrame(
+    [
+        Row(order_id="O1", status="paid", amount=10.0),
+        Row(order_id="O2", status="cancelled", amount=20.0),
+        Row(order_id="O3", status="paid", amount=5.0),
+        Row(order_id="O4", status="paid", amount=15.0),
+        Row(order_id="O5", status="pending", amount=8.0),
+    ]
+)
+print("tipo:", type(pedidos_sp))
+print("imprimir el objeto NO es la tabla:")
+print(pedidos_sp)
+pedidos_sp.printSchema()
+pedidos_sp.show()"""
         ),
         md(
-            """En Spark UI (puerto **4040**) aparece el job del `show`/`count`, no el del `filter`.
+            """## Dónde se parecen y dónde no
 
-**Siguiente:** abre el [lab](02-lab-sesion-spark.ipynb) y **crea tu** notebook."""
+| Qué haces | Pandas | PySpark |
+|-----------|--------|---------|
+| Ver las filas | el propio `df` / `head()` | `show()` (acción) |
+| Número de filas | `len(df)` / `df.shape[0]` | `count()` (acción) |
+| Tipos | `dtypes` (inferidos al crear) | `printSchema()` |
+| Índice 0,1,2… | sí | **no** |
+| Filtrar | `df[df.col == x]` (ya calculado) | `filter` / `where` (plan) |
+| Columna nueva | `df["c"] = ...` | `withColumn` (plan) |
+| Agrupar | `groupby` (ya calculado) | `groupBy` + `agg` (plan hasta `show`) |
+| Dónde viven | RAM del proceso | particiones (aquí: cores del Codespace) |
+
+Ejecuta el filtro Spark y fíjate: el `print` del objeto **no** es una tabla de 3 filas."""
+        ),
+        code(
+            """paid_sp = pedidos_sp.filter(col("status") == "paid")
+print("después del filter, ¿es una tabla?")
+print(paid_sp)
+print("count (ahora sí calcula):", paid_sp.count())
+paid_sp.show()"""
+        ),
+        md(
+            """Misma agregación que en Pandas: recuento y suma por `status`. Sin `show`/`collect` no ves el resultado."""
+        ),
+        code(
+            """(
+    pedidos_sp.groupBy("status")
+    .agg(
+        fsum("amount").alias("amount_sum"),
+    )
+    .show()
+)"""
+        ),
+        md(
+            """Columna nueva: en Spark **no** haces `df["channel"] = "web"` (eso es Pandas). Encadenas `withColumn` y reasignas."""
+        ),
+        code(
+            """pedidos_sp = pedidos_sp.withColumn("channel", lit("web"))
+pedidos_sp.select("order_id", "channel").show()"""
+        ),
+        md(
+            """## El puente (y la trampa)
+
+`toPandas()` trae **todas** las filas al driver. En 5 pedidos no pasa nada. En el fact de NovaShop (miles de líneas, y en un cluster millones) te comes la RAM.
+
+Úsalo solo con `limit(...)` para mirar."""
+        ),
+        code(
+            """muestra = pedidos_sp.limit(3).toPandas()
+print(type(muestra))
+muestra"""
+        ),
+        md(
+            """## Transformación frente a acción (resumen)
+
+- **Transformación** (`filter`, `withColumn`, `groupBy`, `select`): alarga el plan. No hay job en Spark UI.
+- **Acción** (`show`, `count`, `collect`, `write`, `toPandas`): ejecuta. Aparece un job (puerto **4040**).
+
+Spark no “guarda” el DataFrame como un Excel. Guarda un **plan**. Hasta una acción, la cocina está apagada."""
+        ),
+        md(
+            """**Siguiente:** abre el [lab](02-lab-sesion-spark.ipynb) y **crea tu** notebook."""
         ),
     ]
 

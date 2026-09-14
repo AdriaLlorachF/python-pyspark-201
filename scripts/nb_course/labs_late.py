@@ -16,8 +16,7 @@ def m04_01() -> list:
                 "03-lab-kpis.ipynb",
             )
         ),
-        md(
-            paso(
+        *paso(
                 "1",
                 "Carga fact y clientes",
                 "El fact ya trae customer_id de la cabecera. Leo Parquet, no CSV.",
@@ -30,10 +29,8 @@ customers = spark.read.parquet(str(STAGING / "customers_clean"))
 print(fact.count(), customers.count())""",
                 "`1980 250`.",
                 "Si falta fact_lines, cierra M03-02 primero.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "2",
                 "Inner frente a left",
                 "La diferencia ES el síntoma de las claves huérfanas. Cuento los dos.",
@@ -42,10 +39,8 @@ left = fact.join(customers, "customer_id", "left")
 print("inner", inner.count(), "left", left.count())""",
                 "inner **1956** · left **1980**.",
                 "Si el inner sale mayor que 1980, el join de catálogo te ha duplicado (no lo hagas aquí).",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "3",
                 "Anti-join de huérfanos",
                 "left_anti = está en el fact y no en clientes. Mejor que un where a ciegas.",
@@ -55,15 +50,13 @@ print("líneas", orphans.count(), "pedidos", orphans.select("order_id").distinct
                 "**24** líneas · **8** pedidos · `customer_id` tipo `CX*`.",
                 "Si no ves CX*, los filtraste en M02-03: regenera staging.",
                 extra="Opcional: left a `products_clean` por `product_id`. Las líneas `P999` aparecen con `name` nulo: mismo patrón.",
-            )
-        ),
+            ),
         md(
             comprueba(
                 "`fact.count() - inner.count()` → **24** líneas (8 pedidos). Anótalo en Markdown."
             )
         ),
-        md(
-            reto(
+        *reto(
                 "Mismo patrón a grano pedido",
                 "Inner/left de `orders_clean` ⋈ `customers_clean`. Markdown que compare con el grano línea.",
                 """```python
@@ -72,8 +65,7 @@ print("orders", orders.count())
 print("inner", orders.join(customers, "customer_id", "inner").count())  # 780
 print("left ", orders.join(customers, "customer_id", "left").count())   # 788
 ```""",
-            )
-        ),
+            ),
         md(
             errores(
                 [
@@ -99,8 +91,7 @@ def m04_02() -> list:
                 "04-lab-segmentacion.ipynb",
             )
         ),
-        md(
-            paso(
+        *paso(
                 "1",
                 "Universo de venta",
                 "KPI de dinero ≠ KPI de operativa. Inner a clientes y solo is_billable para el dinero.",
@@ -119,10 +110,8 @@ sales = (
 print(sales.count())""",
                 "**1122** líneas cobrables con cliente (1127 − 5 paid huérfanas).",
                 "Si usas left, atribuyes GMV a CX*.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "2",
                 "Cuatro métricas globales",
                 "El ticket medio se calcula a grano pedido: sum(GMV) / countDistinct(order_id), no avg de línea.",
@@ -136,10 +125,8 @@ kpis = kpis.withColumn("aov", fround(col("gmv") / col("orders"), 2))
 kpis.show()""",
                 "GMV ≈ **400157.73** · pedidos cobrables **469** · AOV ≈ **853**.",
                 "Si casteaste a double, el céntimo puede moverse: redondea a 2 decimales.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "3",
                 "Tasa de cancelación",
                 "El denominador es pedidos (no líneas). Sobre orders_clean inner clientes (780).",
@@ -154,10 +141,8 @@ cancel.show()
 print("pedidos con cliente", ord_ok.count())""",
                 "≈ **0.22**. Pedidos con cliente **780**.",
                 "Si mides sobre `sales` (solo paid), la tasa sale 0.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "4",
                 "KPI por canal",
                 "channel_norm (no channel) evita partir web/WEB. Ordeno por GMV.",
@@ -172,16 +157,14 @@ print("pedidos con cliente", ord_ok.count())""",
 )""",
                 "Cuatro filas (`app`, `other`, `store`, `web`). `web` o `app` en cabeza.",
                 "Este groupBy es el cuadro de mando.",
-            )
-        ),
+            ),
         md(
             comprueba(
                 """Reproduce `gmv / countDistinct(order_id)` solo con is_billable e inner.
 Un número ~850, no ~350 (eso sería media de línea). Escríbelo en Markdown."""
             )
         ),
-        md(
-            reto(
+        *reto(
                 "GMV por mes y país",
                 "`groupBy(\"order_month\", \"country\")` con la misma regla cobrable. `UNK` aparece si no rellenaste país.",
                 """```python
@@ -192,8 +175,7 @@ Un número ~850, no ~350 (eso sería media de línea). Escríbelo en Markdown.""
     .show(20)
 )
 ```""",
-            )
-        ),
+            ),
         md(
             errores(
                 [
@@ -219,8 +201,7 @@ def m04_03() -> list:
                 "../M05-analisis-avanzado/01-teoria.ipynb",
             )
         ),
-        md(
-            paso(
+        *paso(
                 "1",
                 "GMV por cliente",
                 "La segmentación es una agregación DESPUÉS de fijar el grano. Parto de sales cobrable.",
@@ -241,10 +222,8 @@ customer_gmv.orderBy(col("gmv").desc()).show(5)
 print(customer_gmv.count())""",
                 "~**211** clientes con al menos un paid.",
                 "Si agregas *todos* los clientes con left, inflas con GMV nulo.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "2",
                 "Bandas de negocio",
                 "Umbrales explícitos: <1000 low, <3000 mid, resto high. Encadena when bien (no solapes).",
@@ -257,10 +236,8 @@ print(customer_gmv.count())""",
 banded.groupBy("value_band").count().orderBy("value_band").show()""",
                 "`high` ≈ 40 · `low` ≈ 56 · `mid` ≈ 115. Suma = count de customer_gmv.",
                 "Los quintiles (`ntile`) van en la mejora, no aquí.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "3",
                 "Guarda para M05",
                 "M05 rankea sobre este grano sin recalcular el GMV.",
@@ -268,15 +245,13 @@ banded.groupBy("value_band").count().orderBy("value_band").show()""",
 print(spark.read.parquet(str(STAGING / "customer_gmv")).count())""",
                 "Carpeta `data/staging/customer_gmv` y el mismo count (~211).",
                 "overwrite para poder repetir el lab.",
-            )
-        ),
+            ),
         md(
             comprueba(
                 "`low + mid + high` debe igualar `customer_gmv.count()`. Una sola cifra, sin clientes en dos bandas."
             )
         ),
-        md(
-            reto(
+        *reto(
                 "Quintiles",
                 "Usa `ntile(5)` sobre `gmv` (ventana global `orderBy(gmv)`) y cuenta cada quintil. Sin partitionBy: ranking de la compañía.",
                 """```python
@@ -286,8 +261,7 @@ from pyspark.sql.functions import ntile
 w = Window.orderBy(col("gmv"))
 customer_gmv.withColumn("q", ntile(5).over(w)).groupBy("q").count().orderBy("q").show()
 ```""",
-            )
-        ),
+            ),
         md(
             errores(
                 [
@@ -312,8 +286,7 @@ def m05_01() -> list:
                 "03-lab-acumulados.ipynb",
             )
         ),
-        md(
-            paso(
+        *paso(
                 "1",
                 "Top 10 clientes",
                 "Sin partitionBy el ranking es de toda la compañía. row_number + where rn <= 10.",
@@ -330,10 +303,8 @@ top10 = cust.withColumn("rn", row_number().over(w_global)).where(col("rn") <= 10
 top10.orderBy("rn").show()""",
                 "10 filas, `rn` de 1 a 10, GMV decreciente. El nº 1 ronda **6000 €**.",
                 "Si no tienes customer_gmv, rehaz el groupBy de M04-03.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "2",
                 "Top 3 productos por cliente",
                 "partitionBy reinicia el rn en cada cliente. Antes, groupBy cliente+producto (si no, la misma SKU se rankea varias veces).",
@@ -352,21 +323,18 @@ top3.where(col("customer_id") == top_id).show()
 print("filas top3", top3.count())""",
                 "Como mucho 3 filas por cliente; `rn` 1–3. `filas top3` ≤ 211 × 3.",
                 "Elige un customer_id con varios productos: sus rn empiezan en 1, no continúan el ranking global.",
-            )
-        ),
+            ),
         md(
             comprueba(
                 """Elige un `customer_id` con varios productos y mira sus `rn`.
 Empiezan en **1**. Escríbelo en Markdown (id + tres filas)."""
             )
         ),
-        md(
-            reto(
+        *reto(
                 "rank vs row_number",
                 "Fuerza un empate (o usa `rank` sobre gmv de clientes) y compara `rank` con `row_number`. Markdown: qué salta y qué no.",
                 "`row_number` nunca empata. `rank` repite y **salta** (1, 2, 2, 4). `dense_rank` no salta (1, 2, 2, 3).",
-            )
-        ),
+            ),
         md(
             errores(
                 [
@@ -392,8 +360,7 @@ def m05_02() -> list:
                 "../M06-optimizacion-ejecucion/01-teoria.ipynb",
             )
         ),
-        md(
-            paso(
+        *paso(
                 "1",
                 "Grano pedido (no línea)",
                 "Un pedido con 3 líneas no es 3 visitas. Agrego a order_id.",
@@ -416,10 +383,8 @@ orders_gmv = (
 print(orders_gmv.count())""",
                 "**469** pedidos cobrables con cliente (el mismo count que el KPI de M04-02).",
                 "Si te salen 1122, no agregaste a order_id.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "2",
                 "Número de pedido y acumulado",
                 "La misma window sirve para el índice y para el sum. El orderBy de la window ES el tiempo.",
@@ -433,26 +398,22 @@ hist = (
 hist.orderBy("customer_id", "order_n").show(12)""",
                 "`order_n` 1, 2, 3… por cliente; `gmv_running` no decrece dentro del mismo customer_id.",
                 "Si baja, el orderBy de la window no es order_ts.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "3",
                 "Primera compra vs repetición",
                 "order_n == 1 es la definición operativa de “nuevos” en este curso.",
                 """hist.groupBy((col("order_n") == 1).alias("is_first")).count().show()""",
                 "~211 primeras compras (un true por cliente con paid) y el resto repeticiones.",
                 "Sin partitionBy el acumulado es de toda la empresa.",
-            )
-        ),
+            ),
         md(
             comprueba(
                 """En un cliente con `order_n` ≥ 2, `gmv_running` de la fila 2 ≥ fila 1.
 Si baja, corrige el orderBy. Déjalo escrito en Markdown."""
             )
         ),
-        md(
-            reto(
+        *reto(
                 "Pedidos hasta superar 1000 €",
                 "Quédate, por cliente, con la primera fila donde `gmv_running >= 1000` (o ninguna).",
                 """```python
@@ -461,8 +422,7 @@ crossed = hist.where(col("gmv_running") >= 1000)
 first_cross = crossed.withColumn("rn", row_number().over(w2)).where(col("rn") == 1)
 first_cross.select("customer_id", "order_n", "gmv_running").show()
 ```""",
-            )
-        ),
+            ),
         md(
             errores(
                 [
@@ -494,8 +454,7 @@ def m06_01() -> list:
 Abre la pestaña **Ports** del Codespace → puerto **4040**. Anota el último Job Id que ves *antes* del paso 2 (puede ser 0).
 """
         ),
-        md(
-            paso(
+        *paso(
                 "1",
                 "Plan sin ejecutar",
                 "Imprimir el objeto DataFrame no dispara jobs. Encadeno wheres y un select.",
@@ -515,41 +474,34 @@ planned = (
 print(planned)""",
                 "El Job Id **más alto** de Spark UI **no cambia** al ejecutar esta celda.",
                 "Lazy de verdad: no hay acción.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "2",
                 "Una acción, un DAG",
                 "count obliga a recorrer las particiones. Miro UI: un job nuevo.",
                 """print(planned.count())""",
                 "Un job nuevo. En Jobs, el DAG muestra al menos un stage. El count es líneas cobrables web/app con GMV > 0 (varios cientos).",
                 "Si cada celda crea un job, tienes un `.show()` de debug por medio.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "3",
                 "Lee el plan",
                 "Busco FileScan parquet (o Scan) y Filter. No traduzco cada operador Catalyst.",
                 """planned.explain("formatted")""",
                 "Aparece el path `fact_lines` y predicados `is_billable` / `gmv_line` / `channel_norm`.",
                 "Copia en Markdown las dos líneas que identifican scan y filtro.",
-            )
-        ),
+            ),
         md(
             comprueba(
                 """Encadena un `.where(...)` extra **sin** `count` y mira Jobs.
 No hay job nuevo. Escríbelo."""
             )
         ),
-        md(
-            reto(
+        *reto(
                 "explain(True) vs formatted",
                 "Compara `explain(True)` con `explain(\"formatted\")`. ¿Dónde se ve el filtro empujado al scan?",
                 "En el físico / formatted, `PushedFilters` o el Filter junto al FileScan indica predicate pushdown. Si el filtro no aparece, lo aplicaste *después* de un select que ya tiró la columna.",
-            )
-        ),
+            ),
         md(
             errores(
                 [
@@ -575,8 +527,7 @@ def m06_02() -> list:
                 "../M07-persistencia-datos/01-teoria.ipynb",
             )
         ),
-        md(
-            paso(
+        *paso(
                 "1",
                 "Un fact más largo",
                 "8 copias: suficiente para notar el cache en local, sin saturar el Codespace.",
@@ -593,10 +544,8 @@ for i in range(7):
 print("particiones iniciales", xl.rdd.getNumPartitions())""",
                 "Varias particiones (> 1). Count esperado **15840** cuando lo lances.",
                 "1980 × 8. Poco para un clúster; bastante para ver Storage en local.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "2",
                 "Dos counts sin cache",
                 "Cada acción relee el plan desde el Parquet + unions. Dos jobs de coste parecido.",
@@ -611,10 +560,8 @@ timed_count(xl, "1er count frío")
 timed_count(xl, "2º count frío")""",
                 "Dos tiempos del mismo orden. Cobrable = 1127 × 8 = **9016**.",
                 "En local a veces es tan corto que el cronómetro no emociona: mira Jobs.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "3",
                 "Cache materializado",
                 "cache() no llena Storage hasta una acción. Primero calientas; después lees memoria.",
@@ -624,10 +571,8 @@ timed_count(warm, "caliente")""",
                 "En Spark UI → Storage aparece el DataFrame. El segundo tiempo **no empeora**.",
                 "La primera acción llena Storage; la segunda debería leer memoria.",
                 extra="Al terminar: `warm.unpersist()` (otra celda, con su Markdown).",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "4",
                 "Repartition por mes",
                 "repartition(12, order_month) hace shuffle hacia 12 particiones. Es preparación para escribir (M07), no una window.",
@@ -636,21 +581,18 @@ print("particiones", by_month.rdd.getNumPartitions())
 by_month.groupBy("order_month").count().orderBy("order_month").show()""",
                 "`particiones 12`. Doce meses en el groupBy.",
                 "Si haces `repartition(col)` sin `n`, en 3.5 usas 200 particiones por defecto.",
-            )
-        ),
+            ),
         md(
             comprueba(
                 """Ejecuta solo `.cache()` y mira Storage **antes** de cualquier count → vacío.
 Luego un count → aparece. Escríbelo."""
             )
         ),
-        md(
-            reto(
+        *reto(
                 "coalesce vs repartition",
                 "Pasa a 1 partición con `coalesce(1)` y con `repartition(1)`. ¿Cuál declara shuffle en el plan?",
                 "`repartition(1)` siempre shufflea. `coalesce(1)` reduce sin shuffle amplio. Útil para un único fichero de entrega; malo como hábito de pipeline (M07).",
-            )
-        ),
+            ),
         md(
             errores(
                 [
@@ -676,8 +618,7 @@ def m07_01() -> list:
                 "../../README.md",
             )
         ),
-        md(
-            paso(
+        *paso(
                 "1",
                 "Dataset curated",
                 "Left al catálogo conserva P999. Inner a clientes quita CX*. Solo paid. dropDuplicates en product_id.",
@@ -707,10 +648,8 @@ sales = (
 print(sales.count())""",
                 "**1122** filas (mismo universo que M04-02).",
                 "Si sale 2244, el catálogo no era único.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "2",
                 "Escribe Parquet por mes",
                 "overwrite deja el curated idempotente. Doce particiones = doce meses de 2024.",
@@ -724,10 +663,8 @@ CURATED.mkdir(parents=True, exist_ok=True)
 print(sorted(p.name for p in dest.iterdir() if p.is_dir()))""",
                 "Carpetas `order_month=2024-01` … `order_month=2024-12` (más `_SUCCESS`).",
                 "Esto es layout de disco, no el repartition de M06.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "3",
                 "Prune al leer un mes",
                 "El plan debe listar solo marzo (o PartitionFilters: order_month=2024-03).",
@@ -736,10 +673,8 @@ marzo.explain("formatted")
 print("marzo", marzo.count(), "total", spark.read.parquet(str(dest)).count())""",
                 "Total **1122**. `marzo` es un subconjunto. El formatted menciona `2024-03`.",
                 "Copia en Markdown la línea del PartitionFilters.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "4",
                 "CSV vs Parquet (schema, no solo tamaño)",
                 "coalesce(1) solo existe aquí para comparar *un* CSV, no como patrón. Releo los dos schemas.",
@@ -756,16 +691,14 @@ spark.read.parquet(str(dest)).printSchema()
 spark.read.option("header", True).csv(str(csv_dir)).printSchema()""",
                 "Parquet mantiene `decimal`/`timestamp`. El CSV vuelve a string. El tamaño: Parquet suele ganar; en este volumen a veces es parecido.",
                 "Curated en CSV “para el analista” pierde tipos.",
-            )
-        ),
+            ),
         md(
             comprueba(
                 """Vuelve a ejecutar el `write.mode(\"overwrite\")` y cuenta.
 Sigue **1122**. No se duplica. Anótalo."""
             )
         ),
-        md(
-            reto(
+        *reto(
                 "Dos claves de partición",
                 "Copia `sales_analytics_geo` con `partitionBy(\"order_month\", \"country\")` y lee marzo ∧ ES. No particiones por customer_id.",
                 """```python
@@ -777,8 +710,7 @@ sales.write.mode("overwrite").partitionBy("order_month", "country").parquet(str(
     .explain("formatted")
 )
 ```""",
-            )
-        ),
+            ),
         md(
             errores(
                 [

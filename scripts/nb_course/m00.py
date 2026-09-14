@@ -150,8 +150,7 @@ def lab() -> list:
                 "../M01-fundamentos-entorno/01-teoria.ipynb",
             )
         ),
-        md(
-            paso(
+        *paso(
                 "1",
                 "Título y propósito",
                 "M00 — mi primer notebook. Voy a comprobar el kernel y las rutas del curso.",
@@ -159,20 +158,16 @@ def lab() -> list:
                 'Debajo de la celda aparece `este es mi notebook`. Si el kernel pide instalar algo, elige **Python (NovaShop)** y reintenta.',
                 "Confirmas que *tu* fichero ejecuta, no el guion.",
                 "Sin kernel: `F1` → Select Notebook Kernel → Python (NovaShop). Si no está: `bash .devcontainer/setup.sh`.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "2",
                 "Explica el entorno (Markdown)",
                 "Un notebook mezcla explicación (Markdown) y código. El estado se guarda entre celdas. Voy a localizar el repo.",
                 "print('esta celda solo recuerda: el Markdown va ARRIBA, el código ABAJO')",
                 "Tienes **dos** celdas nuevas: primero el Markdown del recuadro, después este `print`. El orden se lee de arriba abajo.",
                 "Te acostumbras a no empezar por el código.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "3",
                 "Celda de arranque (cópiala tal cual)",
                 "Celda 0: localizo ROOT, RAW, STAGING y CURATED. La usaré en todos los labs.",
@@ -180,18 +175,15 @@ def lab() -> list:
                 "`RAW` existe `True`. `ROOT` termina en `python-pyspark-201` (o el nombre de tu fork/Codespace).",
                 "Sin esto, las rutas `data/raw` fallan cuando el notebook no está en la raíz del repo.",
                 "Si `RAW` es False: `python3 scripts/generate_novashop.py` en la terminal y reejecuta la celda.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "4",
                 "Lista lo que hay en raw",
                 "Compruebo que NovaShop está generado: customers, products, orders, order_items, events.",
                 """print(sorted(p.name for p in RAW.iterdir() if p.is_file()))""",
                 "Aparecen al menos `customers.csv`, `products.json`, `orders.csv`, `order_items.csv`, `events.jsonl`.",
                 "Antes de Spark, confirmas que los ficheros existen.",
-            )
-        ),
+            ),
         md(
             comprueba(
                 """- Tu fichero se llama `notebooks/trabajo/M00-01-mi-primer-notebook.ipynb`.
@@ -200,13 +192,11 @@ def lab() -> list:
 - **Run All** sigue funcionando de arriba abajo."""
             )
         ),
-        md(
-            reto(
+        *reto(
                 "Una frase tuya",
                 "Añade al final una celda Markdown (mínimo 3 líneas) que explique, con tus palabras, la diferencia entre este guion y *tu* notebook. No copies este párrafo.",
                 "No hay código que pegar: es solo Markdown. Si el formador lo pide, es lo que se mira primero.",
-            )
-        ),
+            ),
         md(
             errores(
                 [

@@ -16,8 +16,7 @@ def m01_01() -> list:
                 "../M02-ingesta-preparacion/01-teoria.ipynb",
             )
         ),
-        md(
-            paso(
+        *paso(
                 "1",
                 "Arranque (siempre el primero)",
                 "Celda 0: localizo el repo y las rutas. Sin esto el resto no arranca.",
@@ -25,10 +24,8 @@ def m01_01() -> list:
                 "`RAW` existe True. `ROOT` es la carpeta del curso.",
                 "El notebook vive en `trabajo/`; las rutas se resuelven desde el repo, no desde `cwd`.",
                 "Copia la celda entera. No escribas `Path('data/raw')`.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "2",
                 "Comprueba Java y PySpark",
                 "Antes de crear la sesión miro versiones. Sin JRE 17 Spark no arranca.",
@@ -40,10 +37,8 @@ print("java:", shutil.which("java"))""",
                 "PySpark `3.5.x` y una línea `openjdk version \"17…\"` (o Microsoft JDK 17).",
                 "Detectas el fallo de entorno *antes* de pelearte con un DataFrame.",
                 "Si Java no es 17: Codespace limpio o `java -version` en local. No improvises otro JDK.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "3",
                 "Crea (o reusa) la sesión",
                 "Pido una SparkSession local[*]. getOrCreate evita un segundo contexto en el puerto 4040.",
@@ -52,10 +47,8 @@ spark""",
                 "Ves un objeto SparkSession. Vuelve a ejecutar la misma celda: es **la misma** sesión, no otra.",
                 "`get_spark` ya pone master `local[*]`, UI 4040 y TZ UTC.",
                 "Puerto ocupado: `spark.stop()` y otra vez `get_spark()`.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "4",
                 "Cinco pedidos en memoria",
                 "createDataFrame es la forma más pequeña de ver schema + tabla sin ficheros.",
@@ -73,10 +66,8 @@ df.printSchema()
 df.show()""",
                 "Schema: `order_id`/`customer_id`/`status` string, `amount` double. Tabla de 5 filas (O90001…O90005).",
                 "Materializas algo visible. `printSchema` y `show` **sí** son acciones.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "5",
                 "Filter no cuenta; count sí",
                 "filter solo alarga el plan. count obliga a ejecutarlo. Quiero 3 paid.",
@@ -86,8 +77,7 @@ print("paid count =", paid.count())""",
                 "`paid count = 3`.",
                 "Si crees que `filter` ya filtró y “no ves nada”, te falta una acción.",
                 extra="Opcional, en otra celda (con su Markdown): `paid.explain(\"formatted\")`. No hace falta entender cada línea.",
-            )
-        ),
+            ),
         md(
             comprueba(
                 """- `spark.version` es 3.5.x.
@@ -96,8 +86,7 @@ print("paid count =", paid.count())""",
 - **Run All** funciona de arriba abajo."""
             )
         ),
-        md(
-            reto(
+        *reto(
                 "Canal en dos columnas",
                 "En *tu* notebook: Markdown que explique el `withColumn` + código que añada `channel` con todos `\"web\"` y muestre solo `order_id` y `channel`. Ejecuta. Deben ser 5 filas y no debe salir `amount`.",
                 """```python
@@ -105,8 +94,7 @@ from pyspark.sql.functions import lit
 
 df.withColumn("channel", lit("web")).select("order_id", "channel").show()
 ```""",
-            )
-        ),
+            ),
         md(
             errores(
                 [
@@ -132,8 +120,7 @@ def m02_01() -> list:
                 "03-lab-schema-tipos.ipynb",
             )
         ),
-        md(
-            paso(
+        *paso(
                 "1",
                 "Arranque y sesión",
                 "Celda 0 + sesión. Compruebo que RAW existe antes de leer.",
@@ -141,10 +128,8 @@ def m02_01() -> list:
                 + "\n\nspark = get_spark(\"novashop-m02\")\nprint(RAW.exists())",
                 "`True` y una sesión `local[*]`.",
                 "Todas las lecturas de este curso son rutas locales del repo (`RAW`, no un string suelto).",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "2",
                 "CSV de clientes y pedidos",
                 "Leo CSV con header. Sin schema: todo string. Cuento y miro 3 filas de orders.",
@@ -156,10 +141,8 @@ orders.show(3, truncate=False)""",
                 "`customers 250` · `orders 800`. Schema de `orders` con `OrderId`, `CustomerId`, `OrderDate`, `Status`, `Channel` (todo `string`).",
                 "Sin schema ves el fichero crudo. Si cuentas 801, has contado la cabecera.",
                 "`option(\"header\", True)` en los dos.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "3",
                 "JSON array y JSONL",
                 "products.json es un array: multiLine=True. events.jsonl es una línea = un objeto.",
@@ -171,16 +154,14 @@ events.printSchema()""",
                 "`products 60` · `events 2500`. En productos aparecen `productId` y `listPrice` (camelCase).",
                 "El API es el mismo (`.json`); cambia el fichero.",
                 "Si products = 362 o ves `_corrupt_record`: falta `multiLine=True`.",
-            )
-        ),
+            ),
         md(
             comprueba(
                 """Cuentas las cuatro fuentes otra vez (Run All). Debes tener **250 / 800 / 60 / 2500**.
 Cada lectura tiene su celda Markdown encima."""
             )
         ),
-        md(
-            reto(
+        *reto(
                 "Líneas de pedido",
                 "Lee `order_items.csv` con header, cuenta y muestra 3 filas. Markdown + código + ejecuta.",
                 """```python
@@ -188,8 +169,7 @@ items = spark.read.option("header", True).csv(str(RAW / "order_items.csv"))
 print(items.count())  # 2046
 items.show(3)
 ```""",
-            )
-        ),
+            ),
         md(
             errores(
                 [
@@ -215,18 +195,15 @@ def m02_02() -> list:
                 "04-lab-calidad-limpieza.ipynb",
             )
         ),
-        md(
-            paso(
+        *paso(
                 "1",
                 "Arranque",
                 "Celda 0 y sesión. Este lab parte de raw, no de lo que tenías en memoria ayer.",
                 CELDA_0 + "\n\nspark = get_spark(\"novashop-m02\")",
                 "Sesión lista. `RAW` True.",
                 "Cada notebook es autónomo: no asumas variables de otro fichero.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "2",
                 "Schema de pedidos y snake_case",
                 "El fichero trae camelCase. El pipeline interno habla snake_case. Declaro el schema y renombro.",
@@ -253,10 +230,8 @@ orders.printSchema()
 print(orders.count())""",
                 "Cinco columnas ya renombradas. `order_ts_raw` sigue string. Count **800**.",
                 "Tipar no borra filas. Las fechas raras se arreglan en el siguiente paso.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "3",
                 "Timestamp con dos formatos",
                 "Hay ISO y dd/MM/yyyy. Un solo to_timestamp deja nulos. coalesce de dos formatos las recupera.",
@@ -273,10 +248,8 @@ print("nulos de fecha", orders.where(col("order_ts").isNull()).count())
 orders.printSchema()""",
                 "`0` nulos en `order_ts`. Tipo `timestamp`.",
                 "Si solo usas ISO, las 3 filas sucias mueren como nulo.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "4",
                 "Líneas: enteros y decimales",
                 "En el CSV unit_price es texto. DecimalType es el tipo de dinero del curso. Reasigno items = items.withColumn(...).",
@@ -292,10 +265,8 @@ items.printSchema()
 items.select("unit_price").limit(3).show()""",
                 "`qty` integer, `unit_price`/`discount` decimal. `show` ya no pone comillas.",
                 "Si no reasignas, `unit_price` sigue string en el objeto viejo.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "5",
                 "Eventos con schema",
                 "JSONL infiere bien casi siempre; el schema evita que ts se quede string el día que llegue un fichero raro.",
@@ -315,16 +286,14 @@ events.printSchema()
 print(events.count())""",
                 "2500 filas; `ts` en `timestamp`.",
                 "Declarar el contrato es más barato que depurar un inferido distinto mañana.",
-            )
-        ),
+            ),
         md(
             comprueba(
                 """`printSchema()` de `orders` (tras el paso 3) e `items` (paso 4):
 `orders.order_ts` timestamp; `items.unit_price` `decimal(10,2)`; `items.qty` int."""
             )
         ),
-        md(
-            reto(
+        *reto(
                 "Catálogo en snake_case y decimal",
                 "Lee `products.json` (multiLine), renombra `productId` → `product_id`, `listPrice` → `list_price` y castea `list_price` a `DecimalType(10,2)`. Tres `list_price` nulos es correcto (se limpian en el siguiente lab).",
                 """```python
@@ -336,8 +305,7 @@ products = (
 )
 products.printSchema()
 ```""",
-            )
-        ),
+            ),
         md(
             errores(
                 [
@@ -371,8 +339,7 @@ def m02_03() -> list:
             )
         ),
         md(f"## Contrato (cúmplelo tal cual)\n\n{reglas}\n"),
-        md(
-            paso(
+        *paso(
                 "1",
                 "Arranque y lecturas tipadas",
                 "Repito la lectura de M02-02 (orders con coalesce, items casteados, products, customers, events). No invento otro schema.",
@@ -427,10 +394,8 @@ events = spark.read.schema(
 print(orders.count(), customers.count(), products.count(), items.count(), events.count())""",
                 "800 250 60 2046 2500 (aún sucios).",
                 "El lab de limpieza parte de tipos ya puestos. Si saltas esto, los filtros no coinciden.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "2",
                 "Clientes y productos",
                 "País vacío es recuperable (UNK). Producto sin precio no se vende: se tira.",
@@ -443,10 +408,8 @@ print("customers", customers_clean.count(), "unk", customers_clean.where(col("co
 print("products", products_clean.count())""",
                 "customers **250** (5 `UNK`) · products **57**.",
                 "Spark CSV convierte vacíos en null: hay que tratar null y `\"\"`.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "3",
                 "Pedidos, líneas y eventos",
                 "Claves vacías rompen joins. Los huérfanos CX* y P999 se quedan: M04 los visibiliza.",
@@ -458,10 +421,8 @@ print("items", items_clean.count())
 print("events", events_clean.count())""",
                 "orders **788** · items **2010** · events **2420**.",
                 "Si filtras también los CX* no te saldrá 788.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "4",
                 "Escribe staging (Parquet)",
                 "Parquet guarda el schema. El siguiente módulo no vuelve a inferir CSV.",
@@ -480,16 +441,14 @@ for name, frame in pairs.items():
 print("releer orders", spark.read.parquet(str(STAGING / "orders_clean")).count())""",
                 "Cinco carpetas bajo `data/staging/`. Releer `orders_clean` = 788 y `order_ts` timestamp.",
                 "Si escribes CSV “para verlo”, pierdes tipos.",
-            )
-        ),
+            ),
         md(
             comprueba(
                 """En `orders_clean` e `items_clean`, nulos de `order_id` / `customer_id` / `product_id` → **0**.
 Pedidos **788**. Líneas **2010**."""
             )
         ),
-        md(
-            reto(
+        *reto(
                 "Filas que tiraste",
                 "Imprime `antes - después` de cada regla (pedidos, líneas, eventos, productos). Markdown que interprete cada diferencia.",
                 """```text
@@ -498,8 +457,7 @@ items     2046 - 2010 = 36  (21 sin producto ∪ 15 qty 0)
 events    2500 - 2420 = 80
 products    60 -  57 = 3
 ```""",
-            )
-        ),
+            ),
         md(
             errores(
                 [
@@ -525,8 +483,7 @@ def m03_01() -> list:
                 "03-lab-reglas-negocio.ipynb",
             )
         ),
-        md(
-            paso(
+        *paso(
                 "1",
                 "Arranque y staging",
                 "Leo Parquet de M02-03. El schema ya viaja; no re-inferimos.",
@@ -539,10 +496,8 @@ items = spark.read.parquet(str(STAGING / "order_items_clean"))
 print(orders.count(), items.count())""",
                 "`788 2010`.",
                 "Si falla el path, no has escrito staging. Vuelve a M02-03.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "2",
                 "Inner para tener fecha",
                 "order_month vive en la cabecera. Inner: las líneas de los 12 pedidos sin cliente no entran.",
@@ -552,10 +507,8 @@ lines = items.join(orders, "order_id", "inner")
 print(lines.count())""",
                 "**1980** filas (2010 − 30 líneas de pedidos descartados).",
                 "Si haces left desde items te quedas en 2010.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "3",
                 "GMV y mes",
                 "La fórmula es una columna. Si discount es 1.50, el GMV sale negativo: suciedad que tapas en el siguiente lab.",
@@ -572,24 +525,21 @@ print("gmv nulos", lines.where(col("gmv_line").isNull()).count())
 print("gmv < 0", lines.where(col("gmv_line") < 0).count())""",
                 "`gmv nulos 0` · `gmv < 0` **13**. `order_month` tipo string `2024-01` … `2024-12`.",
                 "No “arregles” el negativo aquí. Quieres verlo.",
-            )
-        ),
+            ),
         md(
             comprueba(
                 """Cero nulos de `gmv_line` en las 1980 filas; 12 meses de 2024; **13** GMV negativos.
 Deja `lines` en el notebook: lo usas en M03-02 (o rehaz estos 3 pasos)."""
             )
         ),
-        md(
-            reto(
+        *reto(
                 "Pedido de alto valor",
                 "Crea `is_high_value` = `gmv_line >= 500` y cuenta los true (GMV aún sin capar).",
                 """```python
 lines.withColumn("is_high_value", col("gmv_line") >= 500).where("is_high_value").count()
 # 506
 ```""",
-            )
-        ),
+            ),
         md(
             errores(
                 [
@@ -615,8 +565,7 @@ def m03_02() -> list:
                 "../M04-integracion-agregacion/01-teoria.ipynb",
             )
         ),
-        md(
-            paso(
+        *paso(
                 "1",
                 "Reconstruye `lines` (1980)",
                 "Este notebook es autónomo: repito lectura + join + gmv_line + order_month.",
@@ -636,10 +585,8 @@ lines = (
 print(lines.count(), lines.where(col("gmv_line") < 0).count())""",
                 "1980 filas y 13 GMV negativos (punto de partida).",
                 "Si empiezas “en el aire”, no sabes si el capado funcionó.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "2",
                 "Tres reglas y recalcular GMV",
                 "least(..., 1) evita GMV negativo. marketplace/WEB/App no sirven para un groupBy. Recalculo gmv_line AL FINAL.",
@@ -662,10 +609,8 @@ print("filas", fact.count())
 print("gmv < 0", fact.where(col("gmv_line") < 0).count())""",
                 "1980 filas; `gmv_line < 0` pasa a **0**.",
                 "Si capas el discount *después* de calcular GMV y no recalculas, siguen los 13 negativos.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "3",
                 "Valida el dominio",
                 "Un set cerrado se comprueba con groupBy, no a ojo.",
@@ -674,10 +619,8 @@ print("discount > 1", fact.where(col("discount") > 1).count())
 print("billable", fact.where(col("is_billable")).count())""",
                 "Canales solo `app`, `other`, `store`, `web`. `discount > 1` → **0**. Líneas cobrables **1127**.",
                 "El fact guarda las 1980; el flag decide en M04. No filtres `is_billable` al escribir.",
-            )
-        ),
-        md(
-            paso(
+            ),
+        *paso(
                 "4",
                 "Escribe fact_lines",
                 "M04 parte de este fact. CSV perdería tipos y el boolean.",
@@ -687,21 +630,18 @@ print(spark.read.parquet(str(dest)).count())""",
                 "**1980** al releer.",
                 "M04 parte de este fact. CSV perdería tipos y el boolean.",
                 extra="Opcional: `fact.explain(\"formatted\")` y señala el join. Es el puente a M06.",
-            )
-        ),
+            ),
         md(
             comprueba(
                 """`discount <= 1` en todas las filas; `channel_norm` ⊆ {web, app, store, other}; count 1980.
 Tres checks en verde en *tu* notebook (cada uno con Markdown)."""
             )
         ),
-        md(
-            reto(
+        *reto(
                 "El plan incluye el join",
                 "Lanza `fact.explain(\"formatted\")` y señala (en Markdown) la línea del join / Exchange.",
                 "En el plan físico aparece un BroadcastHashJoin o SortMergeJoin con `order_id`. Si no lo ves, estás explicando `lines` *antes* del join.",
-            )
-        ),
+            ),
         md(
             errores(
                 [
