@@ -4,6 +4,43 @@
 
 > Práctica del módulo. La teoría y la demo están en el [README del módulo](README.md).
 
+
+## Tu notebook
+
+El alumno **crea su propio notebook**. No abras ni copies `notebooks/validacion/`.
+
+| | Valor fijo |
+|--|--|
+| Carpeta | [`notebooks/alumno/`](../../notebooks/README.md) |
+| Nombre | `M05-01-ranking-ventana.ipynb` |
+| Cómo crearlo | Explorador → carpeta `notebooks/alumno` → clic derecho → **New File…** → pega el nombre de arriba (con `.ipynb`) → Enter |
+| Kernel | **Python (NovaShop)** · paleta `Notebook: Select Notebook Kernel` si no aparece |
+| Organización y Celda 0 | [notebooks/README.md](../../notebooks/README.md) |
+
+**Celda 0** (primera celda, idéntica en todos los labs). Ejecútala antes de cualquier otra:
+
+```python
+import sys
+from pathlib import Path
+
+_here = Path.cwd().resolve()
+ROOT = next(
+    p
+    for p in [_here, *_here.parents]
+    if (p / "labs" / "_shared" / "session.py").is_file()
+)
+sys.path.insert(0, str(ROOT / "labs" / "_shared"))
+
+from paths import RAW, STAGING, CURATED
+from session import get_spark
+
+print("ROOT   ", ROOT)
+print("RAW    ", RAW, "existe:", RAW.is_dir())
+```
+
+Después, **una celda nueva por cada paso** (`### 1`, `### 2`…). Usa `RAW`, `STAGING` y `CURATED` (no `Path("data/raw")`).
+
+
 ### Objetivo
 
 Obtener el top 10 de clientes por GMV y, por cada cliente, su top 3 productos.
@@ -22,16 +59,11 @@ Carga → window global de clientes → window `partitionBy(customer_id)` de pro
 **Acción:**
 
 ```python
-import sys
-from pathlib import Path
 from pyspark.sql.functions import col, row_number, sum as fsum
 from pyspark.sql.window import Window
 
-sys.path.append(str(Path("labs/_shared").resolve()))
-from session import get_spark
-
 spark = get_spark("novashop-m05")
-cust = spark.read.parquet("data/staging/customer_gmv")
+cust = spark.read.parquet(str(STAGING / "customer_gmv"))
 w_global = Window.orderBy(col("gmv").desc())
 top10 = cust.withColumn("rn", row_number().over(w_global)).where(col("rn") <= 10)
 top10.orderBy("rn").show()
@@ -48,8 +80,8 @@ top10.orderBy("rn").show()
 ```python
 from pyspark.sql.functions import countDistinct
 
-fact = spark.read.parquet("data/staging/fact_lines")
-customers = spark.read.parquet("data/staging/customers_clean")
+fact = spark.read.parquet(str(STAGING / "fact_lines"))
+customers = spark.read.parquet(str(STAGING / "customers_clean"))
 product_gmv = (
     fact.join(customers, "customer_id", "inner")
     .where(col("is_billable"))

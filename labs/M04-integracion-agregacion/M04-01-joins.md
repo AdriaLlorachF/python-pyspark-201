@@ -4,6 +4,43 @@
 
 > Práctica del módulo. La teoría y la demo están en el [README del módulo](README.md).
 
+
+## Tu notebook
+
+El alumno **crea su propio notebook**. No abras ni copies `notebooks/validacion/`.
+
+| | Valor fijo |
+|--|--|
+| Carpeta | [`notebooks/alumno/`](../../notebooks/README.md) |
+| Nombre | `M04-01-joins.ipynb` |
+| Cómo crearlo | Explorador → carpeta `notebooks/alumno` → clic derecho → **New File…** → pega el nombre de arriba (con `.ipynb`) → Enter |
+| Kernel | **Python (NovaShop)** · paleta `Notebook: Select Notebook Kernel` si no aparece |
+| Organización y Celda 0 | [notebooks/README.md](../../notebooks/README.md) |
+
+**Celda 0** (primera celda, idéntica en todos los labs). Ejecútala antes de cualquier otra:
+
+```python
+import sys
+from pathlib import Path
+
+_here = Path.cwd().resolve()
+ROOT = next(
+    p
+    for p in [_here, *_here.parents]
+    if (p / "labs" / "_shared" / "session.py").is_file()
+)
+sys.path.insert(0, str(ROOT / "labs" / "_shared"))
+
+from paths import RAW, STAGING, CURATED
+from session import get_spark
+
+print("ROOT   ", ROOT)
+print("RAW    ", RAW, "existe:", RAW.is_dir())
+```
+
+Después, **una celda nueva por cada paso** (`### 1`, `### 2`…). Usa `RAW`, `STAGING` y `CURATED` (no `Path("data/raw")`).
+
+
 ### Objetivo
 
 Medir cuántas líneas y pedidos se pierden al hacer inner contra clientes, y listar los huérfanos.
@@ -21,16 +58,9 @@ Carga → inner y left → validación de counts → listado `CX*`.
 **Acción:**
 
 ```python
-import sys
-from pathlib import Path
-
-sys.path.append(str(Path("labs/_shared").resolve()))
-from session import get_spark
-
 spark = get_spark("novashop-m04")
-STG = Path("data/staging")
-fact = spark.read.parquet(str(STG / "fact_lines"))
-customers = spark.read.parquet(str(STG / "customers_clean"))
+fact = spark.read.parquet(str(STAGING / "fact_lines"))
+customers = spark.read.parquet(str(STAGING / "customers_clean"))
 print(fact.count(), customers.count())
 ```
 
@@ -85,7 +115,7 @@ Haz el mismo inner/left a grano **pedido** (`orders_clean` ⋈ `customers_clean`
 <summary>Ver solución</summary>
 
 ```python
-orders = spark.read.parquet(str(STG / "orders_clean"))
+orders = spark.read.parquet(str(STAGING / "orders_clean"))
 print("orders", orders.count())
 print("inner", orders.join(customers, "customer_id", "inner").count())  # 780
 print("left ", orders.join(customers, "customer_id", "left").count())   # 788

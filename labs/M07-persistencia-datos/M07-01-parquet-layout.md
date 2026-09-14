@@ -4,6 +4,43 @@
 
 > Práctica del módulo. La teoría y la demo están en el [README del módulo](README.md).
 
+
+## Tu notebook
+
+El alumno **crea su propio notebook**. No abras ni copies `notebooks/validacion/`.
+
+| | Valor fijo |
+|--|--|
+| Carpeta | [`notebooks/alumno/`](../../notebooks/README.md) |
+| Nombre | `M07-01-parquet-layout.ipynb` |
+| Cómo crearlo | Explorador → carpeta `notebooks/alumno` → clic derecho → **New File…** → pega el nombre de arriba (con `.ipynb`) → Enter |
+| Kernel | **Python (NovaShop)** · paleta `Notebook: Select Notebook Kernel` si no aparece |
+| Organización y Celda 0 | [notebooks/README.md](../../notebooks/README.md) |
+
+**Celda 0** (primera celda, idéntica en todos los labs). Ejecútala antes de cualquier otra:
+
+```python
+import sys
+from pathlib import Path
+
+_here = Path.cwd().resolve()
+ROOT = next(
+    p
+    for p in [_here, *_here.parents]
+    if (p / "labs" / "_shared" / "session.py").is_file()
+)
+sys.path.insert(0, str(ROOT / "labs" / "_shared"))
+
+from paths import RAW, STAGING, CURATED
+from session import get_spark
+
+print("ROOT   ", ROOT)
+print("RAW    ", RAW, "existe:", RAW.is_dir())
+```
+
+Después, **una celda nueva por cada paso** (`### 1`, `### 2`…). Usa `RAW`, `STAGING` y `CURATED` (no `Path("data/raw")`).
+
+
 ### Objetivo
 
 Publicar `data/curated/sales_analytics` en Parquet particionado por mes y demostrar que un filtro de mes no lee el año entero.
@@ -21,18 +58,13 @@ Carga del fact cobrable → proyección de columnas analíticas → escritura pa
 **Acción:**
 
 ```python
-import sys
-from pathlib import Path
 from pyspark.sql.functions import col
 
-sys.path.append(str(Path("labs/_shared").resolve()))
-from session import get_spark
-
 spark = get_spark("novashop-m07")
-fact = spark.read.parquet("data/staging/fact_lines")
-customers = spark.read.parquet("data/staging/customers_clean")
+fact = spark.read.parquet(str(STAGING / "fact_lines"))
+customers = spark.read.parquet(str(STAGING / "customers_clean"))
 products = (
-    spark.read.parquet("data/staging/products_clean")
+    spark.read.parquet(str(STAGING / "products_clean"))
     .dropDuplicates(["product_id"])
 )
 
@@ -68,7 +100,7 @@ print(sales.count())
 **Acción:**
 
 ```python
-dest = Path("data/curated/sales_analytics")
+dest = CURATED / "sales_analytics"
 (
     sales.write.mode("overwrite")
     .partitionBy("order_month")
@@ -102,7 +134,7 @@ print("marzo", marzo.count(), "total", spark.read.parquet(str(dest)).count())
 ```python
 import os
 
-csv_dir = Path("data/curated/_csv_compare")
+csv_dir = CURATED / "_csv_compare"
 sales.coalesce(1).write.mode("overwrite").option("header", True).csv(str(csv_dir))
 
 def du(path: Path) -> int:
@@ -138,7 +170,7 @@ Añade `partitionBy("order_month", "country")` en una copia `sales_analytics_geo
 <summary>Ver solución</summary>
 
 ```python
-geo = Path("data/curated/sales_analytics_geo")
+geo = CURATED / "sales_analytics_geo"
 sales.write.mode("overwrite").partitionBy("order_month", "country").parquet(str(geo))
 (
     spark.read.parquet(str(geo))

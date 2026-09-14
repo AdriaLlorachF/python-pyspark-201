@@ -4,6 +4,43 @@
 
 > Práctica del módulo. La teoría y la demo están en el [README del módulo](README.md).
 
+
+## Tu notebook
+
+El alumno **crea su propio notebook**. No abras ni copies `notebooks/validacion/`.
+
+| | Valor fijo |
+|--|--|
+| Carpeta | [`notebooks/alumno/`](../../notebooks/README.md) |
+| Nombre | `M02-02-schema-tipos.ipynb` |
+| Cómo crearlo | Explorador → carpeta `notebooks/alumno` → clic derecho → **New File…** → pega el nombre de arriba (con `.ipynb`) → Enter |
+| Kernel | **Python (NovaShop)** · paleta `Notebook: Select Notebook Kernel` si no aparece |
+| Organización y Celda 0 | [notebooks/README.md](../../notebooks/README.md) |
+
+**Celda 0** (primera celda, idéntica en todos los labs). Ejecútala antes de cualquier otra:
+
+```python
+import sys
+from pathlib import Path
+
+_here = Path.cwd().resolve()
+ROOT = next(
+    p
+    for p in [_here, *_here.parents]
+    if (p / "labs" / "_shared" / "session.py").is_file()
+)
+sys.path.insert(0, str(ROOT / "labs" / "_shared"))
+
+from paths import RAW, STAGING, CURATED
+from session import get_spark
+
+print("ROOT   ", ROOT)
+print("RAW    ", RAW, "existe:", RAW.is_dir())
+```
+
+Después, **una celda nueva por cada paso** (`### 1`, `### 2`…). Usa `RAW`, `STAGING` y `CURATED` (no `Path("data/raw")`).
+
+
 ### Objetivo
 
 Leer pedidos, líneas y eventos con schema explícito, nombres en `snake_case` e importes/fechas casteados.

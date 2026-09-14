@@ -65,6 +65,6 @@ spark.version
 
 | Lab | Título | Qué harás |
 |-----|--------|-----------|
-| M01-01 | [Sesión Spark y primer DataFrame](M01-01-sesion-spark-primer-dataframe.md) | Crear la sesión, materializar 5 pedidos y separar filtro de `count`. |
+| M01-01 | [Sesión Spark y primer DataFrame](M01-01-sesion-spark-primer-dataframe.md) | Crear `notebooks/alumno/M01-01-sesion-spark.ipynb`, sesión Spark, 5 pedidos y `filter` vs `count`. |
 
 → Empieza por **[M01-01 — Sesión Spark y primer DataFrame](M01-01-sesion-spark-primer-dataframe.md)**.

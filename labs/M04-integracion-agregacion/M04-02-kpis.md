@@ -4,6 +4,43 @@
 
 > Práctica del módulo. La teoría y la demo están en el [README del módulo](README.md).
 
+
+## Tu notebook
+
+El alumno **crea su propio notebook**. No abras ni copies `notebooks/validacion/`.
+
+| | Valor fijo |
+|--|--|
+| Carpeta | [`notebooks/alumno/`](../../notebooks/README.md) |
+| Nombre | `M04-02-kpis.ipynb` |
+| Cómo crearlo | Explorador → carpeta `notebooks/alumno` → clic derecho → **New File…** → pega el nombre de arriba (con `.ipynb`) → Enter |
+| Kernel | **Python (NovaShop)** · paleta `Notebook: Select Notebook Kernel` si no aparece |
+| Organización y Celda 0 | [notebooks/README.md](../../notebooks/README.md) |
+
+**Celda 0** (primera celda, idéntica en todos los labs). Ejecútala antes de cualquier otra:
+
+```python
+import sys
+from pathlib import Path
+
+_here = Path.cwd().resolve()
+ROOT = next(
+    p
+    for p in [_here, *_here.parents]
+    if (p / "labs" / "_shared" / "session.py").is_file()
+)
+sys.path.insert(0, str(ROOT / "labs" / "_shared"))
+
+from paths import RAW, STAGING, CURATED
+from session import get_spark
+
+print("ROOT   ", ROOT)
+print("RAW    ", RAW, "existe:", RAW.is_dir())
+```
+
+Después, **una celda nueva por cada paso** (`### 1`, `### 2`…). Usa `RAW`, `STAGING` y `CURATED` (no `Path("data/raw")`).
+
+
 ### Objetivo
 
 Calcular GMV cobrable, nº de pedidos cobrables, ticket medio y tasa de cancelación sobre el universo **con cliente real**.
@@ -64,7 +101,7 @@ kpis.show()
 ```python
 from pyspark.sql.functions import avg
 
-orders = spark.read.parquet(str(STG / "orders_clean"))
+orders = spark.read.parquet(str(STAGING / "orders_clean"))
 ord_ok = orders.join(customers, "customer_id", "inner")
 cancel = ord_ok.agg(
     avg((col("status") == "cancelled").cast("double")).alias("cancel_rate")

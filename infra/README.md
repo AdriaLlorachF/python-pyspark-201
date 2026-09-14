@@ -4,18 +4,26 @@ PySpark corre **en el Codespace**, modo `local[*]`. No hay Docker Compose ni cl�
 
 ## Codespace (recomendado)
 
-1. Abre el repo en GitHub → **Code → Codespaces → Create codespace on main**.
-2. El contenedor instala Java 17, PySpark 3.5 y regenera `data/raw/` si faltara.
-3. Spark UI queda en el puerto **4040** (se reenvía solo).
+1. Abre el repo en GitHub → **Code → Codespaces → Create codespace on main** (o Rebuild si ya existía).
+2. Espera a que termine `postCreate` (Java 17, PySpark 3.5, kernel **Python (NovaShop)**, `data/raw/`).
+3. Spark UI: puerto **4040** (pestaña Ports).
+4. Crea tus notebooks en `notebooks/alumno/` — nombres y Celda 0 en [notebooks/README.md](../notebooks/README.md).
+
+Si el kernel pide `ipykernel` o no aparece **Python (NovaShop)**:
+
+```bash
+bash .devcontainer/setup.sh
+```
+
+Luego paleta (`F1`) → `Notebook: Select Notebook Kernel` → **Python (NovaShop)**.
 
 ## Local (alternativa)
 
-- Python 3.11+ y un JRE/JDK 17 (`java -version`).
-- `pip install -r requirements.txt`
-- `python3 scripts/generate_novashop.py`
+- Python 3.11+ y **JDK 17** (`java -version` debe ser 17; Spark 3.5 no arranca bien en Java 25).
+- `bash .devcontainer/setup.sh`
 
 ## Comprobar
 
 ```bash
-python3 -c "from pyspark.sql import SparkSession; s=SparkSession.builder.master('local[*]').appName('ping').getOrCreate(); print(s.version); s.stop()"
+python3 scripts/run_pipeline.py
 ```

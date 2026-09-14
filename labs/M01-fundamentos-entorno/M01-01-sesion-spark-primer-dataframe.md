@@ -4,14 +4,51 @@
 
 > Práctica del módulo. La teoría y la demo están en el [README del módulo](README.md).
 
+
+## Tu notebook
+
+El alumno **crea su propio notebook**. No abras ni copies `notebooks/validacion/`.
+
+| | Valor fijo |
+|--|--|
+| Carpeta | [`notebooks/alumno/`](../../notebooks/README.md) |
+| Nombre | `M01-01-sesion-spark.ipynb` |
+| Cómo crearlo | Explorador → carpeta `notebooks/alumno` → clic derecho → **New File…** → pega el nombre de arriba (con `.ipynb`) → Enter |
+| Kernel | **Python (NovaShop)** · paleta `Notebook: Select Notebook Kernel` si no aparece |
+| Organización y Celda 0 | [notebooks/README.md](../../notebooks/README.md) |
+
+**Celda 0** (primera celda, idéntica en todos los labs). Ejecútala antes de cualquier otra:
+
+```python
+import sys
+from pathlib import Path
+
+_here = Path.cwd().resolve()
+ROOT = next(
+    p
+    for p in [_here, *_here.parents]
+    if (p / "labs" / "_shared" / "session.py").is_file()
+)
+sys.path.insert(0, str(ROOT / "labs" / "_shared"))
+
+from paths import RAW, STAGING, CURATED
+from session import get_spark
+
+print("ROOT   ", ROOT)
+print("RAW    ", RAW, "existe:", RAW.is_dir())
+```
+
+Después, **una celda nueva por cada paso** (`### 1`, `### 2`…). Usa `RAW`, `STAGING` y `CURATED` (no `Path("data/raw")`).
+
+
 ### Objetivo
 
 Dejar una `SparkSession` viva y materializar un DataFrame de 5 pedidos NovaShop, distinguiendo un `filter` de un `count`.
 
 ### Prerrequisitos
 
-- Codespace arrancado (o Python 3.11 + Java 17 en local; ver [infra/README.md](../../infra/README.md)).
-- Trabajas en [notebooks/sandbox.ipynb](../../notebooks/sandbox.ipynb) o en un notebook nuevo. Ejecuta las celdas **desde la raíz del repo**.
+- Codespace arrancado (o Python 3.11 + Java 17; ver [infra/README.md](../../infra/README.md)).
+- Notebook `notebooks/alumno/M01-01-sesion-spark.ipynb` creado y **Celda 0** ejecutada.
 
 ### En qué consiste
 
@@ -38,12 +75,6 @@ print("java:", shutil.which("java"))
 **Acción:**
 
 ```python
-import sys
-from pathlib import Path
-
-sys.path.append(str(Path("labs/_shared").resolve()))
-from session import get_spark
-
 spark = get_spark("novashop-m01")
 spark
 ```

@@ -4,6 +4,43 @@
 
 > Práctica del módulo. La teoría y la demo están en el [README del módulo](README.md).
 
+
+## Tu notebook
+
+El alumno **crea su propio notebook**. No abras ni copies `notebooks/validacion/`.
+
+| | Valor fijo |
+|--|--|
+| Carpeta | [`notebooks/alumno/`](../../notebooks/README.md) |
+| Nombre | `M02-01-ingesta-csv-json.ipynb` |
+| Cómo crearlo | Explorador → carpeta `notebooks/alumno` → clic derecho → **New File…** → pega el nombre de arriba (con `.ipynb`) → Enter |
+| Kernel | **Python (NovaShop)** · paleta `Notebook: Select Notebook Kernel` si no aparece |
+| Organización y Celda 0 | [notebooks/README.md](../../notebooks/README.md) |
+
+**Celda 0** (primera celda, idéntica en todos los labs). Ejecútala antes de cualquier otra:
+
+```python
+import sys
+from pathlib import Path
+
+_here = Path.cwd().resolve()
+ROOT = next(
+    p
+    for p in [_here, *_here.parents]
+    if (p / "labs" / "_shared" / "session.py").is_file()
+)
+sys.path.insert(0, str(ROOT / "labs" / "_shared"))
+
+from paths import RAW, STAGING, CURATED
+from session import get_spark
+
+print("ROOT   ", ROOT)
+print("RAW    ", RAW, "existe:", RAW.is_dir())
+```
+
+Después, **una celda nueva por cada paso** (`### 1`, `### 2`…). Usa `RAW`, `STAGING` y `CURATED` (no `Path("data/raw")`).
+
+
 ### Objetivo
 
 Cargar `customers`, `orders`, `products` y `events` y comprobar que los volúmenes coinciden con el dataset canónico.
@@ -22,16 +59,8 @@ Carga de las cuatro fuentes → casi sin transformación → validación de `cou
 **Acción:**
 
 ```python
-import sys
-from pathlib import Path
-from pyspark.sql import SparkSession
-
-sys.path.append(str(Path("labs/_shared").resolve()))
-from session import get_spark
-
 spark = get_spark("novashop-m02")
-RAW = Path("data/raw").resolve()
-RAW.exists()
+print(RAW.exists())
 ```
 
 **Por qué:** todas las lecturas de este curso son rutas locales del repo.
@@ -100,6 +129,6 @@ items.show(3)
 
 | Síntoma | Causa probable | Cómo arreglarlo |
 |---------|----------------|-----------------|
-| `PATH not found` | El notebook no está con cwd = raíz del repo | `Path("data/raw").resolve()` y comprueba; en VS Code: “Open Folder” del repo |
+| `PATH not found` | Saltaste la Celda 0 | Copia la Celda 0 de [notebooks/README.md](../../notebooks/README.md) y usa `RAW` |
 | `orders` = 801 | Has contado la cabecera | `option("header", True)` |
 | products = 1 | Lectura como texto / un solo documento mal interpretado | `spark.read.json(...)` sobre `products.json` del repo, no `wholetext` |

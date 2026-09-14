@@ -11,7 +11,7 @@ Sigue este README como índice y avanza **página a página** con **← Página 
 Cada módulo tiene dos niveles: el **README del módulo** con la **teoría** y la **demostración**
 del formador, y uno o varios **laboratorios** donde practicas tú (enlazados desde el README).
 
-Trabajas en un notebook (el del Codespace o [notebooks/sandbox.ipynb](notebooks/sandbox.ipynb)). El markdown es el guion.
+El markdown de `labs/` es el **guion**. Tú **creas** un notebook por laboratorio en [`notebooks/alumno/`](notebooks/README.md) con el nombre fijo de cada lab. No uses `notebooks/validacion/` (referencia de ejecución).
 
 ## Antes de empezar
 
@@ -20,6 +20,7 @@ Trabajas en un notebook (el del Codespace o [notebooks/sandbox.ipynb](notebooks/
 | Codespace con PySpark `local[*]` | [.devcontainer/](.devcontainer/devcontainer.json) |
 | Cómo levantar el entorno | [infra/README.md](infra/README.md) |
 | Dataset NovaShop | [data/README.md](data/README.md) |
+| Dónde crear tus notebooks | [notebooks/README.md](notebooks/README.md) |
 
 ## Módulos
 
