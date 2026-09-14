@@ -208,5 +208,170 @@ def lab() -> list:
                 ]
             )
         ),
-        md(siguiente("../M01-fundamentos-entorno/01-teoria.ipynb", "M01 — teoría")),
+        md(siguiente("03-python-recordatorio.ipynb", "Python de bolsillo")),
+    ]
+
+
+def python_sheet() -> list:
+    return [
+        md(
+            teoria_head(
+                "Python de bolsillo",
+                """Hoja de recordatorio. **No es un curso de Python.** Es lo mínimo que vas a leer y escribir en los labs de PySpark.
+
+Ejecuta las celdas **aquí**. Si ya te suena, recorre en diagonal. Si no, quédate hasta `None` y los `import`.
+
+Pandas y Spark se ven en M01. Aquí no hay DataFrames.""",
+                "02-lab-primer-notebook.ipynb",
+                "../M01-fundamentos-entorno/01-teoria.ipynb",
+            )
+        ),
+        md(
+            """## Variables y tipos
+
+Un nombre guarda un valor. No declaras el tipo: Python lo ve en lo que asignas.
+
+Al ejecutar: cuatro `print` y los tipos `str`, `int`, `float`, `bool`."""
+        ),
+        code(
+            """# = asigna. == compara (más abajo).
+pedido = "O90001"       # texto
+unidades = 3            # entero
+precio = 19.90          # decimal
+cobrado = True          # True / False (mayúscula)
+
+print(pedido, type(pedido))
+print(unidades, type(unidades))
+print(precio, type(precio))
+print(cobrado, type(cobrado))"""
+        ),
+        md(
+            """## `print`, comentarios, f-strings
+
+`print` escribe debajo de la celda. `#` es un comentario (Python no lo ejecuta).
+
+Un f-string mete valores dentro del texto: `f"...{nombre}..."`. Lo usarás para mensajes, no para armar SQL a mano."""
+        ),
+        code(
+            """order_id = "O1"
+gmv = 49.9
+# Esto no corre: es una nota para ti
+print("pedido", order_id)
+print(f"el pedido {order_id} facturó {gmv}")"""
+        ),
+        md(
+            """## `None` (no hay valor)
+
+En Spark verás nulos. En Python el “no hay nada” se llama `None`. Se compara con `is None`, no con `== None` (aunque a veces funcione)."""
+        ),
+        code(
+            """pais = None
+print(pais is None)
+print(pais == "")  # False: vacío y None no son lo mismo"""
+        ),
+        md(
+            """## Comparar y decidir (`if`)
+
+`==` `!=` `<` `>` `<=` `>=`. Varias condiciones: `and`, `or`, `not`.
+
+La indentación (espacios a la izquierda) **es** el bloque. Sin ella, Python falla."""
+        ),
+        code(
+            """status = "paid"
+discount = 1.5
+
+if status == "paid" and discount > 1:
+    print("cobrado, pero el descuento está sucio")
+elif status == "cancelled":
+    print("no entra en el GMV cobrable")
+else:
+    print("otro estado:", status)"""
+        ),
+        md(
+            """## Listas
+
+Una lista es una secuencia ordenada: `[a, b, c]`. Índice desde **0**. En Spark casi no las recorres fila a fila; sí las ves al montar un ejemplo pequeño (`Row(...)` varias veces)."""
+        ),
+        code(
+            """estados = ["paid", "cancelled", "pending"]
+print("primero:", estados[0])
+print("cuántos:", len(estados))
+print("cancelled está?", "cancelled" in estados)
+
+estados.append("refunded")  # añade al final
+for s in estados:
+    print("estado:", s)"""
+        ),
+        md(
+            """## Diccionarios
+
+Un dict es clave → valor. En Pandas una fila parece un dict. En Spark usamos `Row(campo=valor)`, misma idea: nombres de columna."""
+        ),
+        code(
+            """pedido = {"order_id": "O1", "status": "paid", "amount": 10.0}
+print(pedido["order_id"])
+print(list(pedido.keys()))
+
+# Recorrer pares
+for clave, valor in pedido.items():
+    print(clave, "=", valor)"""
+        ),
+        md(
+            """## Texto: lo que más ensucia un CSV
+
+Mayúsculas, espacios, vacío. En los labs verás `lower`, `trim` *en Spark*; aquí es el equivalente Python para que sepas qué significa."""
+        ),
+        code(
+            """canal = "  WEB "
+print(canal.strip())          # quita espacios de los bordes
+print(canal.strip().lower())  # web
+print("".strip() == "")       # texto vacío
+print(bool("WEB"), bool(""))  # True, False"""
+        ),
+        md(
+            """## Funciones
+
+`def` nombra un trozo reutilizable. En el curso casi todo será API de Spark (`filter`, `count`). Una función tuya aparece poco; sí verás `from x import y`."""
+        ),
+        code(
+            """def es_cobrable(status):
+    return status == "paid"
+
+print(es_cobrable("paid"))
+print(es_cobrable("pending"))"""
+        ),
+        md(
+            """## `import`: usar código de otro sitio
+
+`import pandas as pd` carga el módulo. `from pyspark.sql.functions import col` trae **un** nombre.
+
+La Celda 0 de los labs hace esto con `paths` y `session` del repo. No hace falta que la inventes: la pegas."""
+        ),
+        code(
+            """import math
+from pathlib import Path
+
+print(math.sqrt(9))
+print(Path("data") / "raw")  # unir trozos de ruta; en labs usa RAW, no esto"""
+        ),
+        md(
+            """## Lo que **no** hagas en PySpark
+
+Un `for` sobre todas las filas (`for row in df.collect():`) baja todo al driver y se come la RAM. En este curso: columnas (`withColumn`, `filter`, `groupBy`), no bucles de filas.
+
+`collect()` y `toPandas()` solo con `limit(...)` para mirar.
+
+## Mini chequeo
+
+Ejecuta la celda. Debes ver `True` tres veces. Si no, repasa `==`, `None` y el dict."""
+        ),
+        code(
+            """ok_tipos = type(3.14) is float
+ok_none = None is None
+ok_dict = {"a": 1}["a"] == 1
+print(ok_tipos, ok_none, ok_dict)"""
+        ),
+        md(
+            """**Siguiente:** [M01 — teoría](../M01-fundamentos-entorno/01-teoria.ipynb) (Pandas vs Spark, mismas cinco filas)."""
+        ),
     ]

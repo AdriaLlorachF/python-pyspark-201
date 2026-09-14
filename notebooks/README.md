@@ -14,7 +14,7 @@ Kernel: **Python (NovaShop)**.
 
 | Módulo | Notebooks |
 |--------|-----------|
-| [M00 — Entorno](M00-entorno-notebooks/README.md) | [teoría](M00-entorno-notebooks/01-teoria.ipynb) · [lab](M00-entorno-notebooks/02-lab-primer-notebook.ipynb) |
+| [M00 — Entorno](M00-entorno-notebooks/README.md) | [teoría](M00-entorno-notebooks/01-teoria.ipynb) · [lab](M00-entorno-notebooks/02-lab-primer-notebook.ipynb) · [Python](M00-entorno-notebooks/03-python-recordatorio.ipynb) |
 | [M01 — Fundamentos](M01-fundamentos-entorno/README.md) | [teoría](M01-fundamentos-entorno/01-teoria.ipynb) · [lab](M01-fundamentos-entorno/02-lab-sesion-spark.ipynb) |
 | [M02 — Ingesta](M02-ingesta-preparacion/README.md) | [teoría](M02-ingesta-preparacion/01-teoria.ipynb) · [labs](M02-ingesta-preparacion/README.md) |
 | [M03 — Transformación](M03-transformacion-datos/README.md) | [teoría](M03-transformacion-datos/01-teoria.ipynb) · [labs](M03-transformacion-datos/README.md) |

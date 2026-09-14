@@ -14,6 +14,7 @@ from nb_course import labs_early, labs_late, m00, teoria  # noqa: E402
 SPECS = [
     ("M00-entorno-notebooks/01-teoria.ipynb", m00.teoria),
     ("M00-entorno-notebooks/02-lab-primer-notebook.ipynb", m00.lab),
+    ("M00-entorno-notebooks/03-python-recordatorio.ipynb", m00.python_sheet),
     ("M01-fundamentos-entorno/01-teoria.ipynb", teoria.m01),
     ("M01-fundamentos-entorno/02-lab-sesion-spark.ipynb", labs_early.m01_01),
     ("M02-ingesta-preparacion/01-teoria.ipynb", teoria.m02),
