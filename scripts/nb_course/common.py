@@ -41,22 +41,12 @@ Este fichero es el **guion**. No lo rellenes aquí: **crea tu propio notebook** 
 4. Ábrelo. Arriba a la derecha (o `F1` → `Notebook: Select Notebook Kernel`) elige **Python (NovaShop)**.
 5. Deja **este** guion a un lado (pestaña) y escribe **solo** en el tuyo.
 
-## Cómo copiar desde este guion
-
-El texto y el código que tienes que llevarte van en **celdas propias** (no dentro de un párrafo). Así se copian bien:
-
-1. Clic en la celda (código o el Markdown corto del paso).
-2. `Ctrl+A` (o `Cmd+A`) y `Ctrl+C` / `Cmd+C`. En Codespace también sale el icono de copiar en la barra de la celda.
-3. Pega en **tu** notebook. La celda de código pégala como código; la de texto, como Markdown (`Esc` luego `M`).
-
-No copies desde un recuadro gris a medias: usa la celda entera.
-
 ## Cómo organizar *tu* notebook (siempre)
 
 En cada paso creas **dos celdas**, en este orden:
 
-1. **Markdown** — qué vas a hacer y por qué, con tus palabras. Puedes partir del texto corto del paso.
-2. **Código** — pegas la celda de código, la **ejecutas** (`Shift+Enter`), **miras** la salida y, si no cuadra, la **mejoras**.
+1. **Markdown** — qué vas a hacer y por qué, con tus palabras.
+2. **Código** — el de la celda de código del paso. Lo ejecutas (`Shift+Enter`), miras la salida y, si no cuadra, lo mejoras.
 
 No dejes un muro de código sin explicación. Un notebook se lee de arriba abajo, como un cuaderno.
 
@@ -74,24 +64,23 @@ def paso(
     if_fail: str = "",
     extra: str = "",
 ) -> list:
-    """Instrucciones + celda de texto copiable + celda de código copiable."""
+    """Instrucciones + celda de código (eso es lo que pegas en el tuyo)."""
     fail = f"\n\n**Si no sale.** {if_fail}" if if_fail else ""
     more = f"\n\n{extra}" if extra else ""
     return [
         md(
             f"""### Paso {n} — {title}
 
-**1.** En *tu* notebook, crea una celda Markdown. Copia **la celda de texto** que viene ahora (clic → `Ctrl+A` → `Ctrl+C`) y pégala. Luego déjala en tus palabras si quieres.
+En *tu* notebook: una celda Markdown que explique esto (con tus palabras):
 
-**2.** Crea debajo una celda de código. Copia **la celda de código** siguiente entera (igual: clic → seleccionar todo → copiar) y pégala.
+{md_hint}
 
-**3.** Ejecuta en *tu* notebook (`Shift+Enter`). Espera a que deje de verse `[*]`.
+Debajo, una celda de código. El código está **en la celda siguiente** (márcalo y llévatelo). Ejecuta (`Shift+Enter`).
 
-**4. Comprueba.** {check}
+**Comprueba.** {check}
 
 **Por qué este paso.** {why}{fail}{more}"""
         ),
-        md(md_hint.strip()),
         code(src.strip()),
     ]
 
@@ -106,14 +95,14 @@ Antes de dar el lab por cerrado, vuelve a ejecutar de arriba abajo (**Run All**)
 
 
 def reto(title: str, brief: str, solucion: str) -> list:
-    """Enunciado + solución copiable (celda de código si hay un fence python)."""
+    """Enunciado + solución en celda de código (marcable)."""
     cells = [
         md(
             f"""## Mejora — {title}
 
 {brief}
 
-Si te atasca, copia la celda siguiente (clic → `Ctrl+A` → `Ctrl+C`) y pégala en *tu* notebook."""
+Si te atasca, el código está en la celda siguiente."""
         )
     ]
     text = solucion.strip()
@@ -124,9 +113,9 @@ Si te atasca, copia la celda siguiente (clic → `Ctrl+A` → `Ctrl+C`) y pégal
         body = text.split("\n", 1)[-1]
         if body.endswith("```"):
             body = body[: -3].strip()
-        cells.append(md(body))
+        cells.append(code(body))
     else:
-        cells.append(md(text))
+        cells.append(code(text))
     return cells
 
 
