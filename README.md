@@ -9,20 +9,65 @@ Trabajas sobre **NovaShop** (pedidos, catálogo y eventos). Todo el curso vive e
 
 Empieza por el Lab 0: entorno, fork, Codespace y qué es un notebook.
 
-## Módulos
+Índice de ficheros: [notebooks/README.md](notebooks/README.md).
 
-| # | Carpeta | Empieza aquí |
-|---|---------|--------------|
-| M00 | [Entorno y notebooks](notebooks/M00-entorno-notebooks/README.md) | [teoría](notebooks/M00-entorno-notebooks/01-teoria.ipynb) |
-| M01 | [Fundamentos](notebooks/M01-fundamentos-entorno/README.md) | [teoría](notebooks/M01-fundamentos-entorno/01-teoria.ipynb) |
-| M02 | [Ingesta](notebooks/M02-ingesta-preparacion/README.md) | [teoría](notebooks/M02-ingesta-preparacion/01-teoria.ipynb) |
-| M03 | [Transformación](notebooks/M03-transformacion-datos/README.md) | [teoría](notebooks/M03-transformacion-datos/01-teoria.ipynb) |
-| M04 | [Joins y KPIs](notebooks/M04-integracion-agregacion/README.md) | [teoría](notebooks/M04-integracion-agregacion/01-teoria.ipynb) |
-| M05 | [Ventanas](notebooks/M05-analisis-avanzado/README.md) | [teoría](notebooks/M05-analisis-avanzado/01-teoria.ipynb) |
-| M06 | [Ejecución](notebooks/M06-optimizacion-ejecucion/README.md) | [teoría](notebooks/M06-optimizacion-ejecucion/01-teoria.ipynb) |
-| M07 | [Parquet](notebooks/M07-persistencia-datos/README.md) | [teoría](notebooks/M07-persistencia-datos/01-teoria.ipynb) |
+## Temario
 
-Índice completo: [notebooks/README.md](notebooks/README.md).
+### M00 — Entorno y notebooks
+
+Fork, Codespace, qué es un notebook (Markdown vs código) y cómo ejecutarlo.
+
+- Teoría: [01-teoria](notebooks/M00-entorno-notebooks/01-teoria.ipynb)
+- Lab: [tu primer notebook](notebooks/M00-entorno-notebooks/02-lab-primer-notebook.ipynb)
+
+### M01 — Fundamentos y entorno
+
+Qué es Spark y cuándo usarlo. Diferencia con Pandas. `SparkSession` y modelo de ejecución (transformación vs acción).
+
+- Teoría: [01-teoria](notebooks/M01-fundamentos-entorno/01-teoria.ipynb)
+- Lab: [sesión Spark y primer DataFrame](notebooks/M01-fundamentos-entorno/02-lab-sesion-spark.ipynb)
+
+### M02 — Ingesta y preparación de datos
+
+Lectura CSV y JSON. Quién decide nombres y tipos (Spark adivina vs tú escribes el contrato). Calidad y limpieza.
+
+- Teoría: [01-teoria](notebooks/M02-ingesta-preparacion/01-teoria.ipynb)
+- Labs: [ingesta CSV/JSON](notebooks/M02-ingesta-preparacion/02-lab-ingesta-csv-json.ipynb) · [schema y tipos](notebooks/M02-ingesta-preparacion/03-lab-schema-tipos.ipynb) · [calidad y limpieza](notebooks/M02-ingesta-preparacion/04-lab-calidad-limpieza.ipynb)
+
+### M03 — Transformación de datos
+
+Operaciones sobre DataFrames (`select`, `withColumn`). Filtros y expresiones. Lógica de negocio en columnas, no en un `for`.
+
+- Teoría: [01-teoria](notebooks/M03-transformacion-datos/01-teoria.ipynb)
+- Labs: [enriquecimiento](notebooks/M03-transformacion-datos/02-lab-enriquecimiento.ipynb) · [reglas de negocio](notebooks/M03-transformacion-datos/03-lab-reglas-negocio.ipynb)
+
+### M04 — Integración y agregación
+
+Joins entre datasets. Agrupaciones (`groupBy`). Cálculo de métricas y segmentación.
+
+- Teoría: [01-teoria](notebooks/M04-integracion-agregacion/01-teoria.ipynb)
+- Labs: [joins](notebooks/M04-integracion-agregacion/02-lab-joins.ipynb) · [KPIs](notebooks/M04-integracion-agregacion/03-lab-kpis.ipynb) · [segmentación](notebooks/M04-integracion-agregacion/04-lab-segmentacion.ipynb)
+
+### M05 — Análisis avanzado
+
+Window functions. Ranking y acumulados por entidad (cliente / pedido).
+
+- Teoría: [01-teoria](notebooks/M05-analisis-avanzado/01-teoria.ipynb)
+- Labs: [ranking](notebooks/M05-analisis-avanzado/02-lab-ranking-ventana.ipynb) · [acumulados](notebooks/M05-analisis-avanzado/03-lab-acumulados.ipynb)
+
+### M06 — Optimización y ejecución
+
+Evaluación lazy. Plan de ejecución (DAG). Cache y particionado.
+
+- Teoría: [01-teoria](notebooks/M06-optimizacion-ejecucion/01-teoria.ipynb)
+- Labs: [explain y DAG](notebooks/M06-optimizacion-ejecucion/02-lab-explain-dag.ipynb) · [cache y particionado](notebooks/M06-optimizacion-ejecucion/03-lab-cache-particionado.ipynb)
+
+### M07 — Persistencia de datos
+
+Escritura en Parquet. Organización en disco (`partitionBy`). Dataset listo para analítica.
+
+- Teoría: [01-teoria](notebooks/M07-persistencia-datos/01-teoria.ipynb)
+- Lab: [Parquet y layout](notebooks/M07-persistencia-datos/02-lab-parquet-layout.ipynb)
 
 ## Entorno
 
