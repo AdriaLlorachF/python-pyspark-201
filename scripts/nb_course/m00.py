@@ -52,7 +52,8 @@ Atajos que vas a usar:
 Prueba ahora: la siguiente celda es código. Ejecútala."""
         ),
         code(
-            """print("Hola. Esta salida la genera el kernel, no es un print de mentira.")
+            """# Shift+Enter. Lo que sale debajo lo genera el kernel, no es texto del markdown.
+print("Hola. Esta salida la genera el kernel, no es un print de mentira.")
 print("2 + 2 =", 2 + 2)"""
         ),
         md(

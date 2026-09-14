@@ -8,6 +8,7 @@ from pathlib import Path
 CELDA_0 = """import sys
 from pathlib import Path
 
+# El notebook puede estar en trabajo/; subimos hasta encontrar el repo.
 _here = Path.cwd().resolve()
 ROOT = next(
     p
@@ -16,7 +17,7 @@ ROOT = next(
 )
 sys.path.insert(0, str(ROOT / "labs" / "_shared"))
 
-from paths import RAW, STAGING, CURATED
+from paths import RAW, STAGING, CURATED  # rutas absolutas, no Path("data/raw")
 from session import get_spark
 
 print("ROOT   ", ROOT)

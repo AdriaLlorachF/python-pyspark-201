@@ -164,7 +164,17 @@ Kernel: **Python (NovaShop)**.
 
 def boot_cells(app: str) -> list:
     return [
-        md("## Arranque\n\nEjecuta estas dos celdas. Localizan el repo y dejan una `SparkSession` lista."),
+        md(
+            """## Arranque
+
+La primera celda **no es Spark todavía**: busca la raíz del repo (aunque este notebook no esté en la carpeta de arriba) y deja `RAW`, `STAGING` y `CURATED` listos. La segunda pide una `SparkSession` en `local[*]` (todos los cores de esta máquina; no hay clúster).
+
+Al ejecutar: rutas impresas y una versión `3.5.x` con master `local[*]`."""
+        ),
         code(CELDA_0),
-        code(f"spark = get_spark('{app}')\nprint(spark.version, spark.sparkContext.master)"),
+        code(
+            f"""# getOrCreate: si ya hay sesión en este kernel, la reusa (mismo puerto 4040)
+spark = get_spark('{app}')
+print(spark.version, spark.sparkContext.master)"""
+        ),
     ]
