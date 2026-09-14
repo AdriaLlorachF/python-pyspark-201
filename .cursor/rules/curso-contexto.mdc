@@ -1,0 +1,29 @@
+---
+description: Contexto del curso Python + PySpark (NovaShop) — leer antes de editar
+alwaysApply: true
+---
+
+# Curso Python para tratamiento de datos con PySpark
+
+Repo público: `my-it-labs/python-pyspark-201`. Codespace = este repo; **no** está el diseño interno (`.agent/` es local del autor).
+
+## Dónde está el material
+
+- Alumno: `README.md`, `notebooks/M0x/`, `notebooks/trabajo/`, `data/`, `labs/_shared/`, `infra/`, `.devcontainer/`.
+- Teoría: se **ejecuta** en `notebooks/M0x/01-teoria.ipynb` (clase, juntos).
+- Labs: `0N-lab-….ipynb` es el **guion**. El alumno **crea** el `.ipynb` en `notebooks/trabajo/`.
+- `_qa/` no se usa en clase (batería técnica).
+- Tuteo en todo lo publicable. Sin horas, calendario ni «en elaboración».
+- PySpark **3.5.x**, Java 17, `local[*]`. No inventar APIs de Spark 4.
+
+## Dominio
+
+**NovaShop**: tienda online de laboratorio (clientes, catálogo, pedidos, líneas, eventos). Dataset sucio a propósito. Los labs se encadenan: `raw` → `staging` → `fact_lines` → `curated`. No hay proyecto final.
+
+## Qué no entra
+
+Cluster managers, Streaming, MLlib, Delta/Iceberg, Kafka, tuning de JVM.
+
+## Si existe `.agent/` (máquina del autor)
+
+Lee `.agent/HILO-INICIAL.md`, `.agent/diseno/contexto.md`, `.agent/SEED.md` y el plan de sesiones en `.agent/diseno/diseno-pedagogico/`.

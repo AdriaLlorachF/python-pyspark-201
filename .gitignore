@@ -1,8 +1,13 @@
-# Arnés del agente y diseño (no subir al remoto público)
+# Arnés del agente y diseño interno (no es material del alumno)
 .agent/
-.cursor/
 
-# Legacy: por si existían en versiones anteriores
+# Cursor: las rules SÍ se publican para que el Codespace tenga contexto.
+# El resto de .cursor (si aparece) no.
+.cursor/*
+!.cursor/rules/
+!.cursor/rules/**
+
+# Legacy: no volver a subir estos nombres en la raíz
 AGENTS.md
 briefing.md
 temario.md

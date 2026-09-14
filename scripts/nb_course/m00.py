@@ -24,6 +24,8 @@ def teoria() -> list:
                 "M00 — Tu entorno y los notebooks",
                 """Este es el **Lab 0**. Aquí no hay Spark todavía: aprendes a trabajar como vas a trabajar todo el curso.
 
+**Contexto.** NovaShop es una tienda online inventada (clientes, catálogo, pedidos, clics). Todos los labs usan esos ficheros. El Codespace trae PySpark en `local[*]`: un proceso en esta máquina, no un clúster. El pipeline del curso es leer el raw sucio, limpiar, cruzar, agregar y dejar Parquet en `data/curated/`.
+
 En clase abrimos este fichero juntos. Tú ejecutas las mismas celdas.""",
                 "../../README.md",
                 "02-lab-primer-notebook.ipynb",

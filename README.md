@@ -1,8 +1,10 @@
 # Python para tratamiento de datos con PySpark
 
-Trabajas sobre **NovaShop** (pedidos, catálogo, eventos). Todo el curso vive en **notebooks**.
+Trabajas sobre **NovaShop**: una tienda online de laboratorio (pedidos, catálogo, eventos de navegación). No es un producto real ni un clúster. Es el **mismo** escenario en todos los módulos, para que el pipeline se vaya construyendo: `data/raw/` → staging → fact → Parquet analítico. No hay proyecto final.
 
-Este curso es para ti si ya usas Python (y probablemente Pandas) y necesitas **escalar** el procesamiento. No se piden Big Data ni Spark de antemano.
+Todo el curso vive en **notebooks**. Spark corre en este Codespace en modo **`local[*]`** (los cores de esta máquina). No hay YARN, Databricks ni streaming.
+
+Este curso es para ti si ya usas Python (y probablemente Pandas) y necesitas **escalar** el procesamiento. No se piden Big Data ni Spark de antemano. Si Python está flojo: [Python de bolsillo](notebooks/M00-entorno-notebooks/03-python-recordatorio.ipynb).
 
 Al terminar serás capaz de:
 
