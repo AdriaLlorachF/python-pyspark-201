@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Genera notebooks/validacion/*.ipynb (referencia ejecutable)."""
+"""Genera notebooks/_qa/*.ipynb (referencia ejecutable)."""
 from __future__ import annotations
 
 import sys
@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 from nbutil import CELDA_0, code, md, write_notebook  # noqa: E402
 
-OUT = ROOT / "notebooks" / "validacion"
+OUT = ROOT / "notebooks" / "_qa"
 
 
 def build_all() -> None:

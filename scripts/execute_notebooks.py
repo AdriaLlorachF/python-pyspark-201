@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Ejecuta notebooks/validacion en orden, en un solo proceso (sin kernel Jupyter)."""
+"""Ejecuta notebooks/_qa en orden, en un solo proceso (sin kernel Jupyter)."""
 from __future__ import annotations
 
 import json
@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-VDIR = ROOT / "notebooks" / "validacion"
+VDIR = ROOT / "notebooks" / "_qa"
 
 ORDER = [
     "00-entorno.ipynb",

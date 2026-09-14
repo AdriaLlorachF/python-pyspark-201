@@ -7,7 +7,7 @@
 
 ## Tu notebook
 
-El alumno **crea su propio notebook**. No abras ni copies `notebooks/validacion/`.
+El alumno **crea su propio notebook** aquí. En clase usamos `notebooks/clase/`; no copies `notebooks/_qa/`.
 
 | | Valor fijo |
 |--|--|

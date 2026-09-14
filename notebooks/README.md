@@ -1,64 +1,57 @@
-# Notebooks del curso
+# Notebooks — cómo va la clase
 
-Hay **dos carpetas** y no se mezclan.
+Tres sitios, tres usos. **No se mezclan.**
 
 ```text
 notebooks/
-├── README.md                 ← este fichero
-├── alumno/                   ← TÚ creas aquí un .ipynb por laboratorio
-│   └── (vacía al empezar)
-└── validacion/               ← referencia ya resuelta (formador / QA)
-    ├── 00-entorno.ipynb
-    ├── M01-01-sesion-spark.ipynb
-    ├── …
-    └── 99-pipeline-completo.ipynb
+├── clase/           ← AULA: teoría + demo en vivo (el formador ejecuta; tú también)
+│   └── M0x-…/01-teoria.ipynb
+├── alumno/          ← TÚ creas aquí un .ipynb por laboratorio
+└── _qa/             ← NO se usa en clase (batería técnica del repo)
 ```
 
-**No copies** `notebooks/validacion/` a tu carpeta. El aprendizaje es escribir las celdas siguiendo el markdown de `labs/`.
+## Dinámica (como en un curso de notebooks)
 
-## Qué crea el alumno (nombres fijos)
+1. **Teoría de clase.** Abrimos juntos `notebooks/clase/M0x-…/01-teoria.ipynb`. El formador proyecta y ejecuta celda a celda. Tú ejecutas las mismas celdas en **ese mismo fichero** (no lo copies).
+2. **Laboratorio.** Cierras el de clase. Creas **tu** notebook vacío en `notebooks/alumno/` con el nombre de la tabla. El markdown de `labs/Mxx-NN-….md` es el guion (pasos, counts, retos).
+3. **`_qa/` no se abre en clase.** Son notebooks ya resueltos para comprobar que el pipeline del repo no se rompe (`python3 scripts/execute_notebooks.py`). No son el material del alumno ni la pizarra del formador.
 
-| Laboratorio | Carpeta | Nombre exacto del fichero |
-|-------------|---------|---------------------------|
-| M01-01 | `notebooks/alumno/` | `M01-01-sesion-spark.ipynb` |
-| M02-01 | `notebooks/alumno/` | `M02-01-ingesta-csv-json.ipynb` |
-| M02-02 | `notebooks/alumno/` | `M02-02-schema-tipos.ipynb` |
-| M02-03 | `notebooks/alumno/` | `M02-03-calidad-limpieza.ipynb` |
-| M03-01 | `notebooks/alumno/` | `M03-01-enriquecimiento.ipynb` |
-| M03-02 | `notebooks/alumno/` | `M03-02-reglas-negocio.ipynb` |
-| M04-01 | `notebooks/alumno/` | `M04-01-joins.ipynb` |
-| M04-02 | `notebooks/alumno/` | `M04-02-kpis.ipynb` |
-| M04-03 | `notebooks/alumno/` | `M04-03-segmentacion.ipynb` |
-| M05-01 | `notebooks/alumno/` | `M05-01-ranking-ventana.ipynb` |
-| M05-02 | `notebooks/alumno/` | `M05-02-acumulados.ipynb` |
-| M06-01 | `notebooks/alumno/` | `M06-01-explain-dag.ipynb` |
-| M06-02 | `notebooks/alumno/` | `M06-02-cache-particionado.ipynb` |
-| M07-01 | `notebooks/alumno/` | `M07-01-parquet-layout.ipynb` |
+## Teoría de clase (abrir estos)
 
-Un laboratorio = **un** notebook. No reutilices `sandbox`. No pongas espacios ni tildes en el nombre.
+| Módulo | Notebook |
+|--------|----------|
+| M01 | [clase/M01-fundamentos-entorno/01-teoria.ipynb](clase/M01-fundamentos-entorno/01-teoria.ipynb) |
+| M02 | [clase/M02-ingesta-preparacion/01-teoria.ipynb](clase/M02-ingesta-preparacion/01-teoria.ipynb) |
+| M03 | [clase/M03-transformacion-datos/01-teoria.ipynb](clase/M03-transformacion-datos/01-teoria.ipynb) |
+| M04 | [clase/M04-integracion-agregacion/01-teoria.ipynb](clase/M04-integracion-agregacion/01-teoria.ipynb) |
+| M05 | [clase/M05-analisis-avanzado/01-teoria.ipynb](clase/M05-analisis-avanzado/01-teoria.ipynb) |
+| M06 | [clase/M06-optimizacion-ejecucion/01-teoria.ipynb](clase/M06-optimizacion-ejecucion/01-teoria.ipynb) |
+| M07 | [clase/M07-persistencia-datos/01-teoria.ipynb](clase/M07-persistencia-datos/01-teoria.ipynb) |
 
-## Cómo crear cada notebook (Codespace)
+Kernel: **Python (NovaShop)**. Primera celda = arranque (localiza el repo).
 
-1. En el explorador de la izquierda, abre la carpeta `notebooks/alumno`.
-2. Clic derecho sobre `alumno` → **New File…**
-3. Escribe **exactamente** el nombre de la tabla (incluido `.ipynb`) y Enter.
-4. Arriba a la derecha, kernel: elige **Python (NovaShop)**.
-   - Si no aparece: paleta (`F1`) → `Python: Select Interpreter` → `/usr/local/bin/python`.
-   - Luego paleta → `Notebook: Select Notebook Kernel` → **Python (NovaShop)** o `Python 3.11.x` **del mismo** `/usr/local/bin/python`.
-5. Si el kernel pide instalar `ipykernel`: acepta, o en la terminal del Codespace:
+## Labs: qué crea el alumno
 
-```bash
-python3 -m pip install --user -r requirements.txt
-python3 -m ipykernel install --user --name novashop --display-name "Python (NovaShop)"
-```
+| Laboratorio | Nombre exacto en `notebooks/alumno/` |
+|-------------|--------------------------------------|
+| M01-01 | `M01-01-sesion-spark.ipynb` |
+| M02-01 | `M02-01-ingesta-csv-json.ipynb` |
+| M02-02 | `M02-02-schema-tipos.ipynb` |
+| M02-03 | `M02-03-calidad-limpieza.ipynb` |
+| M03-01 | `M03-01-enriquecimiento.ipynb` |
+| M03-02 | `M03-02-reglas-negocio.ipynb` |
+| M04-01 | `M04-01-joins.ipynb` |
+| M04-02 | `M04-02-kpis.ipynb` |
+| M04-03 | `M04-03-segmentacion.ipynb` |
+| M05-01 | `M05-01-ranking-ventana.ipynb` |
+| M05-02 | `M05-02-acumulados.ipynb` |
+| M06-01 | `M06-01-explain-dag.ipynb` |
+| M06-02 | `M06-02-cache-particionado.ipynb` |
+| M07-01 | `M07-01-parquet-layout.ipynb` |
 
-6. Primera celda = **Celda 0** (abajo). Ejecútala con <kbd>Shift</kbd>+<kbd>Enter</kbd>.
-7. Añade **una celda nueva por cada paso** del lab (`### 1`, `### 2`…). Pega el bloque **Acción** del markdown.
-8. Compara la salida con **Resultado esperado**. Luego haz **Comprueba** y el **Reto**.
+Cómo crearlo: explorador → `notebooks/alumno` → clic derecho → **New File…** → el nombre de arriba → kernel **Python (NovaShop)** → Celda 0 del lab markdown.
 
-## Celda 0 (idéntica en todos tus notebooks)
-
-Cópiala tal cual. Localiza el repo aunque el notebook viva en `notebooks/alumno/`.
+## Celda 0 (labs del alumno)
 
 ```python
 import sys
@@ -81,47 +74,4 @@ print("STAGING", STAGING)
 print("CURATED", CURATED)
 ```
 
-Salida esperada: `existe: True` y `ROOT` termina en `python-pyspark-201`.
-
-A partir de ahí, en **otra** celda:
-
-```python
-spark = get_spark("novashop-m01")   # cambia m01 por el lab (m02, m03…)
-```
-
-Usa siempre `RAW`, `STAGING` y `CURATED` de la celda 0. **No** escribas `Path("data/raw")`: si el notebook no está en la raíz, falla.
-
-## Orden y dependencias
-
-| Notebooks | Leen | Escriben |
-|-----------|------|----------|
-| M01-01 | nada (filas en memoria) | — |
-| M02-01, M02-02 | `data/raw/` | — |
-| M02-03 | raw tipado | `data/staging/*_clean` |
-| M03-01 | staging clean | — |
-| M03-02 | líneas de M03-01 | `data/staging/fact_lines` |
-| M04-* | fact + customers | `data/staging/customer_gmv` (M04-03) |
-| M05-* | fact + customer_gmv | — |
-| M06-* | fact | — |
-| M07-01 | fact + dims | `data/curated/sales_analytics` |
-
-Si pierdes el staging: reabre `M02-03` y `M03-02` y vuelve a ejecutar todas las celdas. O en la terminal:
-
-```bash
-python3 scripts/run_pipeline.py
-```
-
-## Kernel y Spark UI
-
-| Qué | Dónde |
-|-----|--------|
-| Kernel | **Python (NovaShop)** |
-| Spark UI | puerto **4040** → pestaña Ports del Codespace |
-| Una sola sesión | `get_spark(...)` usa `getOrCreate()`; no crees otra `SparkSession()` |
-
-## Validación (formador)
-
-```bash
-python3 scripts/run_pipeline.py
-python3 scripts/execute_notebooks.py
-```
+Usa `RAW` / `STAGING` / `CURATED`. No escribas `Path("data/raw")`.
