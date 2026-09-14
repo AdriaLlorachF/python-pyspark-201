@@ -1,14 +1,7 @@
 {
   "name": "NovaShop PySpark",
-  "image": "mcr.microsoft.com/devcontainers/python:1-3.11-bookworm",
-  "features": {
-    "ghcr.io/devcontainers/features/java:1": {
-      "version": "17",
-      "jdkDistro": "ms"
-    },
-    "ghcr.io/devcontainers/features/sshd:1": {
-      "version": "latest"
-    }
+  "build": {
+    "dockerfile": "Dockerfile"
   },
   "forwardPorts": [4040],
   "portsAttributes": {
@@ -19,7 +12,8 @@
   },
   "postCreateCommand": "bash .devcontainer/setup.sh",
   "remoteEnv": {
-    "SPARK_LOCAL_IP": "127.0.0.1"
+    "SPARK_LOCAL_IP": "127.0.0.1",
+    "JAVA_HOME": "/usr/lib/jvm/java-17-openjdk-amd64"
   },
   "customizations": {
     "vscode": {
@@ -29,11 +23,7 @@
       ],
       "settings": {
         "python.defaultInterpreterPath": "/usr/local/bin/python",
-        "python.terminal.activateEnvironment": false,
-        "notebook.defaultKernel": "novashop",
-        "jupyter.kernels.filter": [
-          {"path": "novashop", "type": "python"}
-        ]
+        "python.terminal.activateEnvironment": false
       }
     }
   }

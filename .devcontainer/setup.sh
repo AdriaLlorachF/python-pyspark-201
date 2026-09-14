@@ -13,4 +13,5 @@ echo "==> Kernel NovaShop registrado"
 python3 -m jupyter kernelspec list || true
 echo "==> Java:"
 java -version 2>&1 | head -3
+python3 -c "from pyspark.sql import SparkSession; s=SparkSession.builder.master('local[1]').appName('setup').getOrCreate(); print('spark', s.version); s.stop()"
 echo "OK setup"
