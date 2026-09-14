@@ -73,7 +73,7 @@ from pyspark.sql.functions import col, when, trim
 
 customers_clean = customers.withColumn(
     "country",
-    when(trim(col("country")) == "", "UNK").otherwise(col("country")),
+    when(col("country").isNull() | (trim(col("country")) == ""), "UNK").otherwise(col("country")),
 )
 products_clean = products.where(col("list_price").isNotNull())
 print("customers", customers_clean.count(), "unk", customers_clean.where(col("country") == "UNK").count())

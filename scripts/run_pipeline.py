@@ -128,7 +128,7 @@ def main() -> int:
     )
     customers = customers_raw.withColumn(
         "country",
-        when(trim(col("country")) == "", "UNK").otherwise(col("country")),
+        when(col("country").isNull() | (trim(col("country")) == ""), "UNK").otherwise(col("country")),
     )
     products_clean = products.where(col("list_price").isNotNull())
     orders_clean = orders.where(trim(col("customer_id")) != "")

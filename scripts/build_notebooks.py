@@ -278,7 +278,7 @@ events = spark.read.schema(events_schema).json(str(RAW / "events.jsonl"))"""
         md("## 1–2 — Reglas"),
         code(
             """customers_clean = customers.withColumn(
-    "country", when(trim(col("country")) == "", "UNK").otherwise(col("country")),
+    "country", when(col("country").isNull() | (trim(col("country")) == ""), "UNK").otherwise(col("country")),
 )
 products_clean = products.where(col("list_price").isNotNull())
 orders_clean = orders.where(trim(col("customer_id")) != "")
