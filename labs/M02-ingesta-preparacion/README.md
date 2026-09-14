@@ -20,7 +20,7 @@ NovaShop llega en formatos distintos a propósito. El lector cambia; el DataFram
 | Fuente | Lector | Detalle |
 |--------|--------|---------|
 | `customers.csv`, `orders.csv`, `order_items.csv` | `spark.read.csv` | `header=True`. El CSV **siempre** entra como texto si no hay schema. |
-| `products.json` | `spark.read.json` | Un array JSON (un documento). |
+| `products.json` | `spark.read.option("multiLine", True).json` | Un array JSON (un documento). |
 | `events.jsonl` | `spark.read.json` | Una línea = un objeto. |
 
 **Inferencia** (`inferSchema=True`): Spark mira una muestra y adivina. Útil para explorar. Peligrosa para producir: un precio `"19.90"` puede quedarse string; una fecha `13/01/2024` no es ISO.

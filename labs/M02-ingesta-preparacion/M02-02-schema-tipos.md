@@ -168,7 +168,7 @@ Lee `products.json`, renombra `productId` → `product_id`, `listPrice` → `lis
 
 ```python
 products = (
-    spark.read.json(str(RAW / "products.json"))
+    spark.read.option("multiLine", True).json(str(RAW / "products.json"))
     .withColumnRenamed("productId", "product_id")
     .withColumnRenamed("listPrice", "list_price")
     .withColumn("list_price", col("list_price").cast(DecimalType(10, 2)))

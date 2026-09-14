@@ -65,7 +65,7 @@ def main() -> int:
     print("== M02 ingesta")
     customers_raw = spark.read.option("header", True).csv(str(RAW / "customers.csv"))
     orders_raw = spark.read.option("header", True).csv(str(RAW / "orders.csv"))
-    products_raw = spark.read.json(str(RAW / "products.json"))
+    products_raw = spark.read.option("multiLine", True).json(str(RAW / "products.json"))
     events_raw = spark.read.json(str(RAW / "events.jsonl"))
     items_raw = spark.read.option("header", True).csv(str(RAW / "order_items.csv"))
     expect(customers_raw.count() == counts["customers"], "customers 250")

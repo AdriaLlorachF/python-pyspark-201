@@ -88,7 +88,7 @@ orders.show(3, truncate=False)
 **Acción:**
 
 ```python
-products = spark.read.json(str(RAW / "products.json"))
+products = spark.read.option("multiLine", True).json(str(RAW / "products.json"))
 events = spark.read.json(str(RAW / "events.jsonl"))
 print("products", products.count(), "events", events.count())
 products.printSchema()
@@ -100,7 +100,7 @@ events.printSchema()
 **Resultado esperado:** `products 60` · `events 2500`. En productos aparecen `productId` y `listPrice` (camelCase).
 
 > [!TIP]
-> Si `products.count()` te da 1, estás leyendo el array como una sola fila. En este dataset el lector de Spark aplana el array: deben ser **60**.
+> `products.json` es un **array** (un solo documento). Sin `multiLine=True` Spark lee línea a línea y marca `_corrupt_record`. Con la opción, deben ser **60**.
 
 ## Comprueba tu entendimiento
 
@@ -131,4 +131,4 @@ items.show(3)
 |---------|----------------|-----------------|
 | `PATH not found` | Saltaste la Celda 0 | Copia la Celda 0 de [notebooks/README.md](../../notebooks/README.md) y usa `RAW` |
 | `orders` = 801 | Has contado la cabecera | `option("header", True)` |
-| products = 1 | Lectura como texto / un solo documento mal interpretado | `spark.read.json(...)` sobre `products.json` del repo, no `wholetext` |
+| products = 362 o `_corrupt_record` | Falta `multiLine` en el array JSON | `spark.read.option("multiLine", True).json(...)` |

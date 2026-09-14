@@ -133,7 +133,7 @@ assert customers.count() == 250 and orders.count() == 800"""
         ),
         md("## 3 — JSON / JSONL"),
         code(
-            """products = spark.read.json(str(RAW / "products.json"))
+            """products = spark.read.option("multiLine", True).json(str(RAW / "products.json"))
 events = spark.read.json(str(RAW / "events.jsonl"))
 print("products", products.count(), "events", events.count())
 products.printSchema()
@@ -216,7 +216,7 @@ events = spark.read.schema(events_schema).json(str(RAW / "events.jsonl"))
 events.printSchema()
 assert events.count() == 2500
 products = (
-    spark.read.json(str(RAW / "products.json"))
+    spark.read.option("multiLine", True).json(str(RAW / "products.json"))
     .withColumnRenamed("productId", "product_id")
     .withColumnRenamed("listPrice", "list_price")
     .withColumn("list_price", col("list_price").cast(DecimalType(10, 2)))
@@ -259,7 +259,7 @@ items = (
 )
 customers = spark.read.option("header", True).csv(str(RAW / "customers.csv"))
 products = (
-    spark.read.json(str(RAW / "products.json"))
+    spark.read.option("multiLine", True).json(str(RAW / "products.json"))
     .withColumnRenamed("productId", "product_id")
     .withColumnRenamed("listPrice", "list_price")
     .withColumn("list_price", col("list_price").cast(DecimalType(10, 2)))
