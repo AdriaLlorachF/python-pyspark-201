@@ -1,5 +1,5 @@
-# `_qa` — no es material de clase
+# `_qa` — no es material del curso
 
-Batería ya resuelta para **comprobar el repo** (formador en casa, o `python3 scripts/execute_notebooks.py`).
+Batería ya resuelta para comprobar que el repo no se rompe (`python3 scripts/execute_notebooks.py`).
 
-En el aula no se proyecta. El alumno no copia estos ficheros. La pizarra es `notebooks/clase/`; la práctica es el notebook que el alumno crea en `notebooks/alumno/`.
+No la abras en clase. No la copies. Tú trabajas en `notebooks/trabajo/` siguiendo los guiones `0N-lab-….ipynb`.

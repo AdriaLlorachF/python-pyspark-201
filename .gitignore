@@ -22,5 +22,5 @@ metastore_db/
 derby.log
 data/staging/
 data/curated/
-notebooks/alumno/*.ipynb
-!notebooks/alumno/.gitkeep
+notebooks/trabajo/*.ipynb
+!notebooks/trabajo/README.md

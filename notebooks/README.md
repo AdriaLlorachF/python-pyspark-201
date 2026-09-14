@@ -1,57 +1,35 @@
-# Notebooks — cómo va la clase
+# Notebooks
 
-Tres sitios, tres usos. **No se mezclan.**
+El curso **es** esta carpeta. Cada módulo tiene su directorio. Tú escribes en `trabajo/`.
 
-```text
-notebooks/
-├── clase/           ← AULA: teoría + demo en vivo (el formador ejecuta; tú también)
-│   └── M0x-…/01-teoria.ipynb
-├── alumno/          ← TÚ creas aquí un .ipynb por laboratorio
-└── _qa/             ← NO se usa en clase (batería técnica del repo)
-```
+| Carpeta | Qué haces |
+|---------|-----------|
+| `M00` … `M07` | Abres `01-teoria.ipynb` (ejecutas aquí) y los `0N-lab-….ipynb` (guion: **creas el tuyo**). |
+| [`trabajo/`](trabajo/README.md) | **Tu** sitio. Un `.ipynb` por lab, con celdas Markdown + código. |
+| `_qa/` | No lo uses. Batería interna del repo. |
 
-## Dinámica (como en un curso de notebooks)
+Kernel: **Python (NovaShop)**.
 
-1. **Teoría de clase.** Abrimos juntos `notebooks/clase/M0x-…/01-teoria.ipynb`. El formador proyecta y ejecuta celda a celda. Tú ejecutas las mismas celdas en **ese mismo fichero** (no lo copies).
-2. **Laboratorio.** Cierras el de clase. Creas **tu** notebook vacío en `notebooks/alumno/` con el nombre de la tabla. El markdown de `labs/Mxx-NN-….md` es el guion (pasos, counts, retos).
-3. **`_qa/` no se abre en clase.** Son notebooks ya resueltos para comprobar que el pipeline del repo no se rompe (`python3 scripts/execute_notebooks.py`). No son el material del alumno ni la pizarra del formador.
+## Directorio
 
-## Teoría de clase (abrir estos)
+| Módulo | Notebooks |
+|--------|-----------|
+| [M00 — Entorno](M00-entorno-notebooks/README.md) | [teoría](M00-entorno-notebooks/01-teoria.ipynb) · [lab](M00-entorno-notebooks/02-lab-primer-notebook.ipynb) |
+| [M01 — Fundamentos](M01-fundamentos-entorno/README.md) | [teoría](M01-fundamentos-entorno/01-teoria.ipynb) · [lab](M01-fundamentos-entorno/02-lab-sesion-spark.ipynb) |
+| [M02 — Ingesta](M02-ingesta-preparacion/README.md) | [teoría](M02-ingesta-preparacion/01-teoria.ipynb) · [labs](M02-ingesta-preparacion/README.md) |
+| [M03 — Transformación](M03-transformacion-datos/README.md) | [teoría](M03-transformacion-datos/01-teoria.ipynb) · [labs](M03-transformacion-datos/README.md) |
+| [M04 — Joins y KPIs](M04-integracion-agregacion/README.md) | [teoría](M04-integracion-agregacion/01-teoria.ipynb) · [labs](M04-integracion-agregacion/README.md) |
+| [M05 — Ventanas](M05-analisis-avanzado/README.md) | [teoría](M05-analisis-avanzado/01-teoria.ipynb) · [labs](M05-analisis-avanzado/README.md) |
+| [M06 — Ejecución](M06-optimizacion-ejecucion/README.md) | [teoría](M06-optimizacion-ejecucion/01-teoria.ipynb) · [labs](M06-optimizacion-ejecucion/README.md) |
+| [M07 — Parquet](M07-persistencia-datos/README.md) | [teoría](M07-persistencia-datos/01-teoria.ipynb) · [lab](M07-persistencia-datos/02-lab-parquet-layout.ipynb) |
 
-| Módulo | Notebook |
-|--------|----------|
-| M01 | [clase/M01-fundamentos-entorno/01-teoria.ipynb](clase/M01-fundamentos-entorno/01-teoria.ipynb) |
-| M02 | [clase/M02-ingesta-preparacion/01-teoria.ipynb](clase/M02-ingesta-preparacion/01-teoria.ipynb) |
-| M03 | [clase/M03-transformacion-datos/01-teoria.ipynb](clase/M03-transformacion-datos/01-teoria.ipynb) |
-| M04 | [clase/M04-integracion-agregacion/01-teoria.ipynb](clase/M04-integracion-agregacion/01-teoria.ipynb) |
-| M05 | [clase/M05-analisis-avanzado/01-teoria.ipynb](clase/M05-analisis-avanzado/01-teoria.ipynb) |
-| M06 | [clase/M06-optimizacion-ejecucion/01-teoria.ipynb](clase/M06-optimizacion-ejecucion/01-teoria.ipynb) |
-| M07 | [clase/M07-persistencia-datos/01-teoria.ipynb](clase/M07-persistencia-datos/01-teoria.ipynb) |
+## Tu notebook (todos los labs)
 
-Kernel: **Python (NovaShop)**. Primera celda = arranque (localiza el repo).
+Nombre exacto: el que indica el guion (tabla de cada módulo). Carpeta: `notebooks/trabajo/`.
 
-## Labs: qué crea el alumno
+En cada paso: **Markdown** (qué y por qué) → **código** → `Shift+Enter` → comprueba la salida → si no cuadra, mejora.
 
-| Laboratorio | Nombre exacto en `notebooks/alumno/` |
-|-------------|--------------------------------------|
-| M01-01 | `M01-01-sesion-spark.ipynb` |
-| M02-01 | `M02-01-ingesta-csv-json.ipynb` |
-| M02-02 | `M02-02-schema-tipos.ipynb` |
-| M02-03 | `M02-03-calidad-limpieza.ipynb` |
-| M03-01 | `M03-01-enriquecimiento.ipynb` |
-| M03-02 | `M03-02-reglas-negocio.ipynb` |
-| M04-01 | `M04-01-joins.ipynb` |
-| M04-02 | `M04-02-kpis.ipynb` |
-| M04-03 | `M04-03-segmentacion.ipynb` |
-| M05-01 | `M05-01-ranking-ventana.ipynb` |
-| M05-02 | `M05-02-acumulados.ipynb` |
-| M06-01 | `M06-01-explain-dag.ipynb` |
-| M06-02 | `M06-02-cache-particionado.ipynb` |
-| M07-01 | `M07-01-parquet-layout.ipynb` |
-
-Cómo crearlo: explorador → `notebooks/alumno` → clic derecho → **New File…** → el nombre de arriba → kernel **Python (NovaShop)** → Celda 0 del lab markdown.
-
-## Celda 0 (labs del alumno)
+Celda de arranque (cópiala del guion; es la misma en todos):
 
 ```python
 import sys

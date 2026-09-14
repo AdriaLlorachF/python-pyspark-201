@@ -1,26 +1,25 @@
-# Entorno del laboratorio
+# Entorno
 
-PySpark corre **en el Codespace**, modo `local[*]`. No hay Docker Compose ni clúster.
+PySpark corre **en el Codespace**, modo `local[*]`. El paso a paso (fork, Codespace, kernel, ejecutar un notebook) está en [M00 — teoría](../notebooks/M00-entorno-notebooks/01-teoria.ipynb).
 
-## Codespace (recomendado)
+## Codespace
 
-1. Abre el repo en GitHub → **Code → Codespaces → Create codespace on main** (o Rebuild si ya existía).
+1. **Fork** del repo → en *tu* fork, **Code → Codespaces → Create codespace on main**.
 2. Espera a que termine `postCreate` (Java 17, PySpark 3.5, kernel **Python (NovaShop)**, `data/raw/`).
 3. Spark UI: puerto **4040** (pestaña Ports).
-4. Crea tus notebooks en `notebooks/alumno/` — nombres y Celda 0 en [notebooks/README.md](../notebooks/README.md).
+4. **Crea tus** notebooks en `notebooks/trabajo/`.
 
-Si el kernel pide `ipykernel` o no aparece **Python (NovaShop)**:
+Si no aparece **Python (NovaShop)**:
 
 ```bash
 bash .devcontainer/setup.sh
 ```
 
-Luego paleta (`F1`) → `Notebook: Select Notebook Kernel` → **Python (NovaShop)**.
+Luego `F1` → `Notebook: Select Notebook Kernel` → **Python (NovaShop)**.
 
-## Local (alternativa)
+## Local
 
-- Python 3.11+ y **JDK 17** (`java -version` debe ser 17; Spark 3.5 no arranca bien en Java 25).
-- `bash .devcontainer/setup.sh`
+Python 3.11+ y **JDK 17** (`java -version` debe ser 17). Luego `bash .devcontainer/setup.sh`.
 
 ## Comprobar
 

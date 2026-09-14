@@ -1,4 +1,4 @@
-"""Punto único de arranque para notebooks de alumno y de validación."""
+"""Punto único de arranque para tus notebooks y para `_qa`."""
 
 from __future__ import annotations
 

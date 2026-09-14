@@ -40,7 +40,7 @@ def build_all() -> None:
 
 def _head(title: str, lab: str) -> list:
     return [
-        md(f"# {title}\n\nReferencia de validación. El alumno trabaja en `notebooks/alumno/{lab}`."),
+        md(f"# {title}\n\nReferencia de validación. Tú trabajas en `notebooks/trabajo/{lab}`."),
         md("## Celda 0 — localizar el repo"),
         code(CELDA_0),
     ]

@@ -1,4 +1,4 @@
-"""Rutas del repo. Funcionan aunque el notebook esté en notebooks/alumno/."""
+"""Rutas del repo. Funcionan aunque el notebook esté en notebooks/trabajo/."""
 
 from pathlib import Path
 
