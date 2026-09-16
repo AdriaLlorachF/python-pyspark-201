@@ -15,6 +15,8 @@
   "order_items_discount_gt_1": 13,
   "events": 2500,
   "events_null_customer_id": 80,
+  "reviews": 150,
+  "reviews_empty_product_id": 8,
   "m01_sample_paid": 3,
   "m02_orders_valid_customer_id": 788,
   "fact_lines_after_order_inner": 1980,

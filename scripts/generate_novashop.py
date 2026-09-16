@@ -29,14 +29,16 @@ def main() -> None:
     orders = _orders(rng, customers)
     items = _items(rng, orders, products)
     events = _events(rng, customers, products, orders)
+    reviews = _reviews(rng, customers, products)
 
     _write_customers(customers)
     _write_products(products)
     _write_orders(orders)
     _write_items(items)
     _write_events(events)
+    _write_reviews(reviews)
 
-    counts = _canonical(customers, products, orders, items, events)
+    counts = _canonical(customers, products, orders, items, events, reviews)
     out = ROOT / "data" / "CANONICAL_COUNTS.json"
     out.write_text(json.dumps(counts, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(json.dumps(counts, indent=2, ensure_ascii=False))
@@ -195,7 +197,50 @@ def _write_events(rows: list[dict]) -> None:
             fh.write(json.dumps(r, ensure_ascii=False) + "\n")
 
 
-def _canonical(customers, products, orders, items, events) -> dict:
+def _reviews(rng: random.Random, customers: list[dict], products: list[dict]) -> list[dict]:
+    """Colección aditiva para el lab extra Mongo. El pipeline CSV/JSON no la usa."""
+    comments = [
+        "todo bien",
+        "tardo el envio",
+        "perfecto",
+        "no era lo que esperaba",
+        "repetire",
+        "la caja llego abierta",
+    ]
+    ids = [c["customer_id"] for c in customers]
+    pids = [p["productId"] for p in products]
+    rows = []
+    for i in range(1, 151):
+        ts = datetime(2024, 1, 1) + timedelta(days=rng.randint(0, 364), hours=rng.randint(0, 23))
+        pid = rng.choice(pids)
+        if i <= 8:
+            pid = None
+        rows.append(
+            {
+                "review_id": f"R{i:05d}",
+                "customer_id": rng.choice(ids),
+                "product_id": pid,
+                "stars": rng.randint(1, 5),
+                "comment": rng.choice(comments),
+                "created_at": ts.strftime("%Y-%m-%dT%H:%M:%S"),
+                "channel": rng.choice(["web", "app", "WEB", "App"]),
+                "meta": {
+                    "verified": bool(rng.randint(0, 1)),
+                    "lang": rng.choice(["es", "en", "fr"]),
+                },
+            }
+        )
+    return rows
+
+
+def _write_reviews(rows: list[dict]) -> None:
+    path = RAW / "reviews.jsonl"
+    with path.open("w", encoding="utf-8") as fh:
+        for r in rows:
+            fh.write(json.dumps(r, ensure_ascii=False) + "\n")
+
+
+def _canonical(customers, products, orders, items, events, reviews) -> dict:
     empty_country = sum(1 for c in customers if not c["country"])
     empty_cust_order = sum(1 for o in orders if not o["CustomerId"])
     orphan_cust_order = sum(1 for o in orders if str(o["CustomerId"]).startswith("CX"))
@@ -225,6 +270,8 @@ def _canonical(customers, products, orders, items, events) -> dict:
         "order_items_discount_gt_1": bad_discount,
         "events": len(events),
         "events_null_customer_id": events_no_cust,
+        "reviews": len(reviews),
+        "reviews_empty_product_id": sum(1 for r in reviews if not r["product_id"]),
         "m01_sample_paid": 3,
         "m02_orders_valid_customer_id": len(orders) - empty_cust_order,
         "fact_lines_after_order_inner": 1980,

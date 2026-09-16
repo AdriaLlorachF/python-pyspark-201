@@ -8,10 +8,14 @@ python3 -m pip install --user --upgrade pip
 python3 -m pip install --user -r "$ROOT/requirements.txt"
 python3 -m ipykernel install --user --name novashop --display-name "Python (NovaShop)"
 python3 "$ROOT/scripts/generate_novashop.py"
+python3 "$ROOT/scripts/seed_mongo.py" || echo "==> seed Mongo omitido (lab extra)"
 
 echo "==> Kernel NovaShop registrado"
 python3 -m jupyter kernelspec list || true
 echo "==> Java:"
 java -version 2>&1 | head -3
 python3 -c "from pyspark.sql import SparkSession; s=SparkSession.builder.master('local[1]').appName('setup').getOrCreate(); print('spark', s.version); s.stop()"
+echo "==> Connector Mongo (Maven, primera vez tarda):"
+PYTHONPATH="$ROOT/labs/_shared${PYTHONPATH:+:$PYTHONPATH}" python3 -c "from session import prefetch_mongo_connector; prefetch_mongo_connector(); print('mongo connector ok')" \
+  || echo "==> connector Mongo omitido (sin red o Spark); el lab extra lo bajará al arrancar"
 echo "OK setup"

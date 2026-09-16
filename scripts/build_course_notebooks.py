@@ -21,6 +21,7 @@ SPECS = [
     ("M02-ingesta-preparacion/02-lab-ingesta-csv-json.ipynb", labs_early.m02_01),
     ("M02-ingesta-preparacion/03-lab-schema-tipos.ipynb", labs_early.m02_02),
     ("M02-ingesta-preparacion/04-lab-calidad-limpieza.ipynb", labs_early.m02_03),
+    ("M02-ingesta-preparacion/05-lab-ingesta-mongo.ipynb", labs_early.m02_04),
     ("M03-transformacion-datos/01-teoria.ipynb", teoria.m03),
     ("M03-transformacion-datos/02-lab-enriquecimiento.ipynb", labs_early.m03_01),
     ("M03-transformacion-datos/03-lab-reglas-negocio.ipynb", labs_early.m03_02),

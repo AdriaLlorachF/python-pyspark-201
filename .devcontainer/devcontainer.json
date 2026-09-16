@@ -1,24 +1,30 @@
 {
   "name": "NovaShop PySpark",
-  "build": {
-    "dockerfile": "Dockerfile"
-  },
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "shutdownAction": "stopCompose",
   "features": {
     "ghcr.io/devcontainers/features/sshd:1": {
       "version": "latest"
     }
   },
-  "forwardPorts": [4040],
+  "forwardPorts": [4040, 27017],
   "portsAttributes": {
     "4040": {
       "label": "Spark UI",
       "onAutoForward": "notify"
+    },
+    "27017": {
+      "label": "MongoDB",
+      "onAutoForward": "silent"
     }
   },
   "postCreateCommand": "bash .devcontainer/setup.sh",
   "remoteEnv": {
     "SPARK_LOCAL_IP": "127.0.0.1",
-    "JAVA_HOME": "/usr/lib/jvm/java-17-openjdk-amd64"
+    "JAVA_HOME": "/usr/lib/jvm/java-17-openjdk-amd64",
+    "MONGO_URI": "mongodb://mongo:27017"
   },
   "customizations": {
     "vscode": {

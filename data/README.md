@@ -19,6 +19,7 @@ Los recuentos oficiales están en `CANONICAL_COUNTS.json`.
 | `orders.csv` | CSV | 800 | Cabeceras camelCase; 12 sin cliente; 8 clientes huérfanos; 3 fechas `dd/mm/yyyy`; canales mezclados (`WEB`, `App`, `marketplace`) |
 | `order_items.csv` | CSV | 2046 | 21 sin producto; 18 `P999`; 15 `qty=0`; 13 `discount>1`; precio como texto |
 | `events.jsonl` | JSON Lines | 2500 | 80 sin `customer_id` |
+| `reviews.jsonl` | JSON Lines | 150 | 8 sin `product_id`; `meta` anidado. **Solo lab extra Mongo** (seed). El pipeline no lo lee. |
 
 ## staging/ y curated/
 

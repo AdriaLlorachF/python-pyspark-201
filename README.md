@@ -75,7 +75,11 @@ Lees las fuentes reales de NovaShop. Quién decide nombres y tipos: Spark puede 
 - Normalización de columnas y tipos.
 - Filtrado de datos inválidos y escritura del staging.
 
-→ [teoría](notebooks/M02-ingesta-preparacion/01-teoria.ipynb) · [ingesta](notebooks/M02-ingesta-preparacion/02-lab-ingesta-csv-json.ipynb) · [schema](notebooks/M02-ingesta-preparacion/03-lab-schema-tipos.ipynb) · [calidad](notebooks/M02-ingesta-preparacion/04-lab-calidad-limpieza.ipynb)
+**Extra (opcional)**
+
+- Ingesta desde un Mongo **vivo** (compose del Codespace): connector, insertar un documento, el `count` sube. No entra en el pipeline. Hace falta **Rebuild** del Codespace (`git pull` no basta).
+
+→ [teoría](notebooks/M02-ingesta-preparacion/01-teoria.ipynb) · [ingesta](notebooks/M02-ingesta-preparacion/02-lab-ingesta-csv-json.ipynb) · [schema](notebooks/M02-ingesta-preparacion/03-lab-schema-tipos.ipynb) · [calidad](notebooks/M02-ingesta-preparacion/04-lab-calidad-limpieza.ipynb) · [Mongo extra](notebooks/M02-ingesta-preparacion/05-lab-ingesta-mongo.ipynb)
 
 ### M03 — Transformación de datos
 
