@@ -104,8 +104,6 @@ Luego vuelve a elegir **Python (NovaShop)**.
 
 ¿Trabajas en local? Python 3.11 + JDK **17** y el mismo `setup.sh`. `java -version` no puede ser 21/25.
 
-Hay un **lab extra** (M02, Mongo vivo) que necesita el contenedor `mongo` del compose. Un `git pull` en un Codespace viejo **no** lo levanta: hay que **Rebuild Container** o crear Codespace nuevo. Detalle: [infra/README.md](../../infra/README.md). El pipeline de ficheros no depende de eso.
-
 ## Cómo ejecutar un notebook de teoría
 
 1. Ábrelo desde el explorador (doble clic en el `.ipynb`).
