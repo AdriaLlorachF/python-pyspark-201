@@ -7,7 +7,7 @@ import os
 from pyspark.sql import SparkSession
 
 # Connector 10.x ↔ Spark 3.5 / Scala 2.12. Se baja en setup.sh para no esperar en clase.
-MONGO_SPARK_PACKAGE = "org.mongodb.spark:mongo-spark-connector_2.12:10.4.1"
+MONGO_SPARK_PACKAGE = "org.mongodb.spark:mongo-spark-connector_2.12:10.4.2"
 
 
 def mongo_uri() -> str:
