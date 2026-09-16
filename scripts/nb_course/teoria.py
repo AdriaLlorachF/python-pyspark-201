@@ -379,60 +379,119 @@ def m04() -> list:
         md(
             teoria_head(
                 "M04 — Joins y KPIs",
-                """Un número de negocio mentiroso casi siempre viene de **cruzar mal** dos tablas, no de un `sum` mal escrito.
+                """Un número de negocio mentiroso casi siempre viene de **mezclar dos tamaños de fila**, no de un `sum` mal escrito.
 
-Vamos a montar un ejemplo mínimo: dos clientes reales y tres líneas. Una de las líneas apunta a un cliente que **no existe** (`CX9`). Eso en NovaShop son los huérfanos `CX*` que dejamos en el staging a propósito.""",
+Antes de cruzar nada, fíjate en esto (como un ticket de supermercado):
+
+- Un **pedido** (`order_id`) es el ticket entero: “O1”.
+- Una **línea** es un producto dentro del ticket: “100 € de auriculares” y “50 € de cable” pueden ser **el mismo** pedido.
+- Un **cliente** vive en otra lista. Si la línea apunta a un id que no está en esa lista, es un **huérfano** (en NovaShop, los `CX*`).
+
+En las celdas de abajo el juguete es pequeño a propósito: **un pedido con dos líneas**, otro pedido de una línea, y un huérfano. Así se ve la diferencia. Luego el lab usa NovaShop entero.""",
                 "../M03-transformacion-datos/03-lab-reglas-negocio.ipynb",
                 "02-lab-joins.ipynb",
             )
         ),
         *boot_cells("novashop-clase-m04"),
         md(
-            """## Qué significa cada cruce
+            """## Las dos tablas, en bruto
 
-Un join responde: “para cada fila de la izquierda, ¿encuentro clave en la derecha?”.
+`clientes` tiene **una fila por persona**. `lineas` tiene **una fila por producto vendido**, no por pedido.
 
-- **inner**: solo las filas que **empatan**. `CX9` desaparece. El GMV de esa línea **no entra** en el total. Úsalo cuando el universo de negocio es “con cliente conocido”.
-- **left**: todas las de la izquierda. `CX9` se queda, las columnas del cliente salen nulas. Úsalo para **medir** cuánto se pierde, no para reportar venta atribuida.
-- **left_anti**: “está en la izquierda y **en ninguna** de la derecha”. Es la lista de huérfanos. Mejor que un `where` a ciegas.
-
-Al ejecutar: inner **2**, left **3**, y el anti enseña la fila `O3` / `CX9`."""
+Al ejecutar verás 2 clientes y **4 líneas**. `O1` aparece **dos veces** (100 € y 50 €): eso no son dos ventas de compañía, es **un** ticket con dos productos. `O3` / `CX9` no tiene ficha en `clientes`."""
         ),
         code(
             """from pyspark.sql import Row
-from pyspark.sql.functions import col, sum as fsum, countDistinct
+from pyspark.sql.functions import col, sum as fsum, countDistinct, avg
 
 clientes = spark.createDataFrame([
     Row(customer_id="C1", country="ES"),
-    Row(customer_id="C2", country="FR"),
+    Row(customer_id="C2", country="FR"),  # no compra en este juguete; da igual
 ])
+# gmv_line = dinero de ESA línea (un producto), no del pedido entero
 lineas = spark.createDataFrame([
     Row(order_id="O1", customer_id="C1", gmv_line=100.0, is_billable=True),
-    Row(order_id="O2", customer_id="C1", gmv_line=50.0, is_billable=True),
+    Row(order_id="O1", customer_id="C1", gmv_line=50.0, is_billable=True),   # mismo pedido
+    Row(order_id="O2", customer_id="C1", gmv_line=30.0, is_billable=True),
     Row(order_id="O3", customer_id="CX9", gmv_line=999.0, is_billable=True),  # huérfano
 ])
-print("inner (pierde al huérfano)", lineas.join(clientes, "customer_id", "inner").count())
-print("left  (conserva las 3)   ", lineas.join(clientes, "customer_id", "left").count())
+print("clientes (1 fila = 1 persona)")
+clientes.show()
+print("lineas (1 fila = 1 producto; O1 está dos veces)")
+lineas.show()"""
+        ),
+        md(
+            """## Cruzar: “¿esta línea tiene cliente de verdad?”
+
+Un join no suma dinero. Solo pregunta, **línea a línea**: ¿el `customer_id` está en `clientes`?
+
+- **inner** — me quedo solo si hay emparejamiento. `CX9` (y sus 999 €) **desaparecen**. Cuenta: **3** (las dos de `O1` y la de `O2`).
+- **left** — me quedo con **todas** las líneas. `CX9` sigue, `country` sale `null`. Cuenta: **4**. Sirve para *ver* cuánto se cae, no para decir “vendimos 999 a un cliente”.
+- **left_anti** — “líneas cuyo cliente **no** está en la lista”. Es la foto del huérfano. Verás `O3`.
+
+Al ejecutar: inner **3**, left **4**, anti = `O3`."""
+        ),
+        code(
+            """print("inner (fuera el huérfano)", lineas.join(clientes, "customer_id", "inner").count())
+print("left  (siguen las 4)     ", lineas.join(clientes, "customer_id", "left").count())
 print("quién no está en clientes:")
 lineas.join(clientes, "customer_id", "left_anti").show()"""
         ),
         md(
-            """## Ticket medio: grano pedido, no grano línea
+            """## `sales` no es “las ventas del pedido”
 
-`O1` y `O2` son **dos** pedidos del mismo cliente, 100 + 50 = 150. El ticket medio de la compañía en este juguete es `150 / 2 = 75`, no la media de las dos líneas (sigue siendo 75 aquí porque hay una línea por pedido; en NovaShop un pedido tiene varias líneas y `avg(gmv_line)` **baja** el ticket).
+En los labs llamamos `sales` a: líneas **cobrables** (`is_billable`) **con cliente conocido** (inner).
 
-Regla: `sum(GMV) / countDistinct(order_id)`, siempre sobre el universo que hayas elegido (aquí: inner + cobrable). El `groupBy("country")` es el mismo GMV troceado."""
+Eso **no** agrupa. Sigue habiendo **una fila por producto**. `O1` sigue saliendo dos veces. El nombre engaña: no es un ticket cerrado, es el recorte “estas líneas sí cuentan para dinero atribuible”.
+
+Al ejecutar: **3** filas, GMV de línea 100 / 50 / 30. El 999 ya no está."""
         ),
         code(
-            """# Universo de dinero: cliente real y línea cobrable (el 999 de CX9 no entra)
+            """# Recorte, no agregación: mismas 3 líneas, ahora con country
 sales = lineas.join(clientes, "customer_id", "inner").where(col("is_billable"))
-sales.agg(
-    fsum("gmv_line").alias("gmv"),
-    countDistinct("order_id").alias("orders"),
-).show()  # 150 y 2
+print("filas en sales (sigue siendo grano LÍNEA):", sales.count())
+sales.show()"""
+        ),
+        md(
+            """## El ticket medio: no hagas la media de las filas
+
+Pregunta de negocio: “¿cuánto deja de media **un pedido**?”
+
+En `sales` hay **3 productos** y solo **2 tickets** (`O1` = 150 €, `O2` = 30 €).
+
+| Cálculo | Qué está promediando | Número |
+|---------|----------------------|-------:|
+| `avg(gmv_line)` | las **3 líneas** (100, 50, 30) | **60** ← mentira útil |
+| `sum(gmv_line) / countDistinct(order_id)` | los **2 pedidos** (150 y 30) | **90** ← ticket medio |
+
+`avg` no sabe qué filas son el mismo `order_id`. Por eso la regla del curso es siempre:
+
+`GMV = sum(gmv_line)` y `pedidos = countDistinct(order_id)` y `AOV = GMV / pedidos`.
+
+El `groupBy("country")` no cambia de grano: es **el mismo 180 €** partido por país (aquí todo es ES).
+
+Al ejecutar: una fila `gmv=180`, `orders=2`, `aov=90`; `avg_linea=60`; país ES = 180."""
+        ),
+        code(
+            """# Lo que NO hay que usar para el ticket:
+sales.agg(avg("gmv_line").alias("avg_linea")).show()  # 60: media de productos
+
+# Lo que SÍ: dinero total y cuántos tickets distintos
+kpis = sales.agg(
+    fsum("gmv_line").alias("gmv"),                 # 180
+    countDistinct("order_id").alias("orders"),     # 2  (no 3)
+)
+kpis = kpis.withColumn("aov", col("gmv") / col("orders"))  # 90
+kpis.show()
+
+# Mismo 180, cortado por país (sigue siendo suma de líneas)
 sales.groupBy("country").agg(fsum("gmv_line").alias("gmv")).show()"""
         ),
-        md("**Siguiente:** [lab de joins](02-lab-joins.ipynb) sobre el dataset real."),
+        md(
+            """En NovaShop pasa lo mismo a lo grande: `sales` son miles de **líneas**; el AOV divide por pedidos distintos, no por `count()` de filas.
+
+**Siguiente:** [lab de joins](02-lab-joins.ipynb) sobre el dataset real."""
+        ),
     ]
 
 
