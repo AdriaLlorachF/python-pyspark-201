@@ -500,7 +500,7 @@ El Codespace tiene que estar **reconstruido** con el `docker-compose` nuevo. Un 
         *paso(
                 "1",
                 "Arranque con el connector",
-                "Celda 0 y una sesión **nueva** con el connector Mongo (jars en `labs/_shared/jars/`). Si el kernel ya tenía Spark, `getOrCreate` reusa esa sesión **sin** los jars: por eso paramos antes.",
+                "Celda 0 y una sesión **nueva** que baja el connector de Mongo. Si el kernel ya tenía Spark (otro lab), `getOrCreate` reusa esa sesión **sin** el jar: por eso paramos antes.",
                 CELDA_0
                 + """
 
@@ -515,8 +515,8 @@ spark = get_spark("novashop-mongo", packages=MONGO_SPARK_PACKAGE)
 print(spark.version, spark.sparkContext.master)
 print("MONGO_URI", mongo_uri())""",
                 "Versión `3.5.x`, master `local[*]`, URI `mongodb://mongo:27017` (en el Codespace con compose).",
-                "El string de `get_spark` es el nombre de la app. `packages=...` engancha los jars locales (no Ivy: el POM de Mongo usa un rango de versiones que tumba el gateway Java).",
-                "Si `JAVA_GATEWAY_EXITED`: falta `python3 scripts/fetch_mongo_jars.py` o no paraste la sesión vieja. Kernel → Restart y esta celda.",
+                "El string de `get_spark` sigue siendo solo el nombre de la app. El connector va en `packages`.",
+                "Si `format(mongodb)` falla más abajo: no paraste la sesión vieja. `spark.stop()` y esta celda otra vez.",
             ),
         *paso(
                 "2",
@@ -639,11 +639,6 @@ buenas.select("review_id", "stars", "meta.lang").show(5)
                         "Timeout / no host `mongo`",
                         "Compose no está (Codespace viejo o local sin Docker)",
                         "Rebuild Container o Codespace nuevo. `git pull` no basta",
-                    ),
-                    (
-                        "JAVA_GATEWAY_EXITED",
-                        "Ivy / jars Mongo, o Java no arranca",
-                        "`python3 scripts/fetch_mongo_jars.py`, Restart kernel, paso 1",
                     ),
                     (
                         "Failed to find data source: mongodb",
