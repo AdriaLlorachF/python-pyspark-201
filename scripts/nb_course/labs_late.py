@@ -537,64 +537,100 @@ def m06_01() -> list:
                 "M06-01",
                 "Explain y DAG",
                 "M06-01-explain-dag.ipynb",
-                """Separar **tres cosas** que en la UI se parecen:
+                """Dejar de pensar como Pandas: escribir `where` **no** recorre el fichero. Spark solo alarga una **receta**. `explain` es ver qué haría **sin** hacerlo. `count` es hacerlo (ahí nace un job en la UI).
 
-1. **Plan** — la receta (`explain` la imprime; **no** lee el Parquet).
-2. **Job** — una ejecución de verdad (`count`, `show`, `write`).
-3. **DAG** — el dibujo de ese job en Spark UI. Solo existe **después** de una acción.
-
-Al terminar: un `print` del DataFrame no mueve Jobs; un `count` sí; y en el `explain` sabes señalar el *Scan* y el *Filter*.""",
+Orden de este lab (si lo inviertes, no se nota nada): **print → explain → count**. Primero el mapa, luego el viaje.""",
                 "01-teoria.ipynb",
                 "03-lab-cache-particionado.ipynb",
             )
         ),
         md(
-            """## Léelo antes de copiar código (si no, el lab no se entiende)
+            """## Qué queremos conseguir (léelo; el código viene después)
 
-Spark es **vago**: `where` / `select` / `read` **encadenan** trabajo, no lo hacen. Hasta que no lanzas una **acción**, no hay recorrido de ficheros ni número de filas.
+Vienes de Pandas (o de “ejecuto la celda y ya está filtrado”). En Spark **no**.
 
-| Escribes | Nombre | ¿Lee `fact_lines`? | ¿Sale un número / tabla? |
-|----------|--------|--------------------|---------------------------|
-| `df.where(...)` | transformación | no | no |
-| `print(df)` | enseñar el **objeto** | no | el tipo y las columnas, no el count |
-| `df.explain(...)` | imprimir el **plan** | no | un muro de texto (la receta) |
-| `df.count()` / `df.show()` | **acción** | sí | un entero / filas |
+Hasta que no lanzas una **acción** (`count`, `show`, `write`), Spark **no** ha leído las 1980 líneas de `fact_lines`. Los `where` / `select` solo alargan una receta. Por eso `print(planned)` no te da un número: te enseña el **objeto** (el papel de la receta).
 
-`explain` **no** es una acción. No llena cache, no crea job, no sube el Job Id. Sirve para leer el mapa **antes** (o después) de viajar.
+`explain` es la herramienta de este lab: **ver qué haría Spark sin recorrerlo**. El muro de texto no se lee como un libro; se **busca** Scan (de dónde salen las filas) y Filter (tus `where`).
 
-### Qué significa cada palabro del plan
+`count` es el viaje: ahora sí abre el Parquet, aplica la receta y te da un entero. En Spark UI aparece **un job nuevo**. El dibujo de ese job (etapas) y el árbol de la pestaña SQL son *la misma historia* que el `explain`, pero **después** de haber ejecutado.
 
-No memorices Catalyst. En el texto de `explain("formatted")` busca **estas** palabras:
+Eso es todo. No memorices Catalyst. El lab siguiente (cache) solo tiene sentido si esto está claro: “esta receta es cara → la guardo”.
 
-| Si ves… | Quiere decir… |
-|---------|----------------|
-| *FileScan parquet* / *Scan parquet* | “voy a abrir este directorio Parquet” (ahí sale la ruta `fact_lines`) |
-| *PushedFilters* | “estos `where` se los mando al scan” (no leo todo y filtro después del todo) |
-| *Filter* | un `where` que aún se aplica como paso |
-| *Project* | un `select` / columnas que se quedan |
-| *HashAggregate* | un `groupBy` / `count` / `sum` |
-| *InMemoryTableScan* | “esto lo leo del **cache**”, no del Parquet (eso es el lab siguiente) |
+| Escribes | ¿Recorre `fact_lines`? | Qué ves en el notebook | Qué ves en la UI |
+|----------|------------------------|------------------------|------------------|
+| `where` / `select` / `read` | no | nada (o el objeto si haces `print`) | Jobs **igual** |
+| `print(df)` | no | `DataFrame[columnas…]`, **sin** entero | Jobs **igual** |
+| `df.explain(...)` | no | muro de texto (receta) | Jobs **igual** |
+| `df.count()` / `show()` | **sí** | un entero / filas | **un job nuevo** |
 
-### Spark UI (útil, no obligatorio)
+El número de filas del `count` **no** es la demo (ya sabías filtrar en M03). La demo es: Job Id **quieto** con print/explain, Job Id **+1** con count.
 
-Pestaña **Ports** del Codespace → puerto **4040** (si está muerto, otra sesión ocupó el puerto: `spark.stop()` y `get_spark` otra vez; a veces cae en 4041).
+### Markdown de *tu* notebook: no improvises teoría
 
-- **Jobs**: cada `count`/`show` añade una fila. Un `print(df)` o un `explain` **no**.
-- **Storage**: este lab no cachea; debe seguir vacío.
-- El **DAG** es el dibujo que se abre al hacer clic en un job. Es el de **esa** acción, no del `explain`.
-
-Si no te abre la UI, da igual: este lab se demuestra con `print` vs `count` vs `explain` en el notebook.
+El plantilla de los pasos dice “con tus palabras”. **Aquí no.** En cada paso te dejo el párrafo ya redactado, con huecos `___` (Job Ids, sí/no). Cópialo, ejecuta, rellena. Si escribes otra teoría, este lab vuelve a “no demostrar nada”.
 
 Necesitas `data/staging/fact_lines` (M03-02 o `python3 scripts/run_pipeline.py`)."""
         ),
+        md(
+            """## Spark UI: ábrela **antes** del paso 1 (una sola vez)
+
+Sin esto, cada paso te va a pedir “mira Jobs” y no vas a saber a qué ventana te refieres.
+
+1. En el Codespace / VS Code, panel de abajo: pestaña **Ports** (junto a Terminal). Si no está: *View → Ports*.
+2. Busca el puerto **4040**. Suele poner `Spark` o el nombre de la app.
+3. Clic en el **globo** (Open in Browser) o *Forward*. Se abre una web “Spark … Application UI”.
+4. Arriba, el nombre de la app debe ser `novashop-m06` **después** de ejecutar `get_spark` del paso 1. Si aún no lo has ejecutado, abre la UI igual y **recarga** tras el paso 1.
+5. Si **4040** no carga o está vacío: mira si hay **4041**. Otra sesión se quedó el 4040. En una celda: `spark.stop()`, otra vez `get_spark("novashop-m06")`, recarga Ports y entra al puerto que haya salido.
+6. Pestañas que usamos en **este** lab (las otras, ignóralas):
+
+| Pestaña | Qué es, en cristiano | Cuándo hay algo que mirar |
+|---------|----------------------|---------------------------|
+| **Jobs** | Lista de **viajes**. Cada `count`/`show`/`write` = una fila nueva. | Solo **después** de una acción. Print y explain **no** añaden fila. |
+| **SQL / DataFrame** | El **árbol** de esa consulta (Scan, Filter, Aggregate…). Es el `explain` después de haber viajado. | Después del primer `count`. |
+| **Storage** | Datasets guardados en memoria (`cache`). | En este lab debe quedarse **vacío**. Si no, kernel sucio: `spark.catalog.clearCache()`. |
+
+**Cómo se lee Jobs** (la tabla, no el dibujo):
+
+- **Job Id** — 0, 1, 2… El más alto es el último viaje. Si ya corriste la teoría en este kernel, **no empieza en 0**. Da igual: lo que importa es si **sube** o no.
+- **Description** — casi siempre se ve `count` (o `show`). Es el nombre de la acción, no de tu DataFrame.
+- **Duration** — en local puede ser 0,1 s. No es la prueba.
+- **Stages** — `2/2` o `1/1`. Un job se parte en **etapas** cuando hay shuffle. Un `count` típico: etapa que lee+filtra+cuenta trozos, a veces otra que junta el total (`Exchange` por medio).
+
+**El dibujo (DAG) no es el `explain`.**
+
+- En **Jobs**, al cliclar un Job Id, el “DAG Visualization” son **cajas grandes = stages**. Vas a ver nombres tipo *WholeStageCodegen*, *Exchange*, *count*. **No busques la palabra `Filter` ahí.** El filtro va *dentro* de un stage y esa caja no lo detalla.
+- El árbol con *Scan parquet* y *Filter* está en **SQL / DataFrame** → clic en la consulta → Details. Eso **sí** se parece al `explain` del notebook.
+- Si abres un DAG y el Job Id es **menor o igual** al que anotaste *antes* de la celda, es un viaje **viejo**. No es de esta celda.
+
+**Recarga.** La UI no siempre pinta sola: vuelve a cliclar **Jobs** (o F5) después de cada celda.
+
+Anota **ahora**, antes de pegar código, el Job Id más alto que ves (si no hay ninguno, escribe `ninguno / -1`):
+
+`Job Id de partida = ___`"""
+        ),
         *paso(
                 "1",
-                "Encadenar no ejecuta",
-                """Celda 0 + sesión + un DataFrame con **tres** `where` y un `select`.
+                "Encadenar no ejecuta (solo alarga la receta)",
+                """Ignora lo de “con tus palabras”. Copia esto en el Markdown y rellena **después** de ejecutar:
 
-`print(planned)` enseña el objeto (`DataFrame[order_id: …]`). Eso **no** es el número de filas. Spark aún no ha abierto el Parquet (salvo, a veces, para leer el *schema*; eso no cuenta como “ya filtró”).
+```
+Paso 1. Escribir where no recorre el Parquet: solo alarga la receta.
+print(planned) me enseñó el objeto DataFrame[…], no un entero.
+Job Id de partida: ___
+Job Id después de esta celda: ___   (tiene que ser el mismo)
+En Jobs no hay fila nueva. Storage sigue vacío. No hay DAG nuevo que abrir.
+```
 
-Si tienes UI: anota el Job Id más alto **antes** de ejecutar, y otra vez **después**. No debe subir.""",
+**UI de este paso (hazlo en este orden):**
+
+1. Mira Jobs. Anota el Job Id más alto (el de partida, si aún no lo tenías).
+2. Ejecuta la celda de código (`Shift+Enter`).
+3. Vuelve a la UI → **Jobs** (recarga). El más alto **no** cambia.
+4. Abre **Storage**. Vacío.
+5. **No** clicles un job viejo para “ver el DAG”. Ese DAG no es de esta celda. Esta celda **no** ha viajado.
+
+Si el Job Id **sube** aquí: tienes un `count`/`show` de más en la celda, o `get_spark` disparó algo raro. Quita cualquier `.count()` y reejecuta.""",
                 CELDA_0
                 + """
 
@@ -602,102 +638,169 @@ from pyspark.sql.functions import col
 
 spark = get_spark("novashop-m06")
 
-# read + 3 where + select = plan más largo. Todavía NO hay job.
+# Tres where + select = receta más larga. Todavía NO hay viaje.
 planned = (
     spark.read.parquet(str(STAGING / "fact_lines"))
-    .where(col("is_billable"))                          # cobrable
-    .where(col("gmv_line") > 0)                         # GMV positivo
-    .where(col("channel_norm").isin("web", "app"))      # solo esos canales
+    .where(col("is_billable"))
+    .where(col("gmv_line") > 0)
+    .where(col("channel_norm").isin("web", "app"))
     .select("order_id", "customer_id", "gmv_line", "order_month")
 )
 
-# Objeto, no resultado. Tiene que salir algo tipo DataFrame[order_id: string, ...]
+# Objeto (papel de la receta), NO el número de filas
 print("¿qué es?", type(planned).__name__)
 print(planned)""",
-                "`DataFrame[...]` con esas cuatro columnas. **Ningún** entero tipo 800. El Job Id de la UI no sube (si la tienes).",
-                "Si `print(planned)` ya te diera 1127, estarías ejecutando un `count` sin darte cuenta.",
-                if_fail="PATH / AnalysisException de `fact_lines` → no está el Parquet de M03. Corre el pipeline o cierra M03-02.",
-            ),
-        *prueba(
-                "print no cuenta; count sí",
-                "En *otra* celda, imprime otra vez `planned` y **después** `planned.count()`. Mira qué línea da el entero.",
-                """print("otra vez el objeto:", planned)
-n = planned.count()
-print("ahora sí, filas =", n)""",
-                "La primera línea sigue siendo el DataFrame. La segunda es un **entero** (varios cientos: cobrable + GMV>0 + web/app). Si tienes UI, **aquí** aparece un job nuevo y un DAG.",
+                "`DataFrame[order_id, customer_id, gmv_line, order_month]`. Ningún entero tipo 800. Job Id **igual** que el de partida.",
+                "Si `print` ya te diera 1127, estarías ejecutando un `count` sin darte cuenta. Pandas ya habría filtrado; Spark no.",
+                if_fail="PATH / AnalysisException de `fact_lines` → falta M03-02 o `run_pipeline.py`.",
             ),
         *paso(
                 "2",
-                "Una acción = un job (y entonces hay DAG)",
-                """`count()` recorre las particiones, aplica los tres filtros y devuelve un número.
+                "`explain`: ver qué haría **sin** hacerlo",
+                """Copia y rellena:
 
-Eso es el viaje: Spark UI → **Jobs** → el job nuevo → clic → **DAG**. El DAG es el dibujo de *este* count, no de los `where` del paso 1.
+```
+Paso 2. explain imprime la receta. No recorre el Parquet. No da el count.
+Job Id antes: ___   Job Id después: ___   (igual)
+En el helper: fact_lines sí, is_billable sí, Filter sí.
+En el tocho, Ctrl+F: una línea de Scan/fact_lines y una de Filter/PushedFilters.
+Jobs: sin fila nueva. El árbol Scan+Filter AÚN no está en SQL: no hemos viajado.
+```
 
-Si cada celda te crea un job, tienes un `.show()` de debug por medio: coméntalo mientras mides.""",
-                """# Acción: ahora sí lee fact_lines y filtra
-n = planned.count()
-print("líneas cobrables web/app con GMV > 0 =", n)
-print("(vuelve a dar el mismo número: el plan no ha cambiado)")""",
-                "Un entero **> 0**, del orden de varios cientos. Un job nuevo en la UI. El DAG tiene al menos un stage.",
-                "Sin acción no hay DAG que mirar. El `explain` del paso 3 es el mapa en texto, no ese dibujo.",
+**Cómo leer el tocho** (no de arriba abajo): Ctrl+F en la salida de la celda.
+
+| Buscas | Quiere decir |
+|--------|----------------|
+| `fact_lines` / *FileScan* / *Scan parquet* | de aquí salen las filas |
+| `is_billable` / `gmv_line` / `channel_norm` | tus `where` están en la receta |
+| *PushedFilters* | el `where` se empujó al scan (no “leer todo y filtrar al final del todo”) |
+| *Filter* | un `where` como paso |
+| *Project* | el `select` de cuatro columnas |
+
+El helper de la celda te imprime **sí/NO** para no perderte. El tocho es por si quieres copiar **una** línea de Scan y **una** de Filter.
+
+**UI de este paso:**
+
+1. Anota Job Id más alto.
+2. Ejecuta. El notebook se llena de texto; **no** sale el entero del count.
+3. Recarga **Jobs**: el más alto **sigue igual**. `explain` no es un viaje.
+4. **SQL / DataFrame**: igual que antes (vacío, o las consultas *viejas*). Esta receta todavía no se ejecutó, así que **no** aparece un árbol nuevo.
+5. **Storage**: vacío.
+
+Esto es el aha: ya viste Scan y Filter **sin** haber leído el Parquet.""",
+                """def receta(df, etiqueta):
+    # Versión corta del explain: sí/NO, sin leer el tocho como un libro
+    txt = df._jdf.queryExecution().executedPlan().toString()
+    print("=== Receta de", etiqueta, "(aún NO ha corrido) ===")
+    for pal in (
+        "fact_lines",
+        "is_billable",
+        "gmv_line",
+        "channel_norm",
+        "Filter",
+        "Project",
+    ):
+        print("   ", "sí" if pal in txt else "NO", pal)
+
+receta(planned, "planned")
+print("----- tocho (Ctrl+F: Scan y Filter) -----")
+planned.explain("formatted")""",
+                "Helper: `sí` en `fact_lines`, `is_billable`, `Filter`. El tocho no termina en un entero. Job Id **igual**.",
+                "Si Job Id sube, no has hecho `explain`: has hecho `count`. Si el helper dice NO en `is_billable`, estás explain-ando otro DataFrame.",
             ),
         *paso(
                 "3",
-                "`explain` imprime el mapa (no el resultado)",
-                """`explain("formatted")` **planifica** (resuelve nombres, optimiza) y **imprime**. No cuenta filas.
+                "`count`: ahora sí viaja (un job, entonces hay qué pintar)",
+                """Copia y rellena:
 
-En la salida, **no** leas de arriba abajo como un libro. Busca con Ctrl+F:
+```
+Paso 3. count recorre el Parquet y aplica la receta que ya vimos en el explain.
+Filas = ___   (varios cientos; cobrable + GMV>0 + web/app)
+Job Id antes: ___   Job Id después: ___   (este SÍ sube: +1)
+En Jobs: una fila nueva, Description con "count".
+En SQL: una consulta nueva; al abrirla veo Scan y Filter (el explain, pero ejecutado).
+En el DAG de Jobs (cajas grandes) NO busqué la palabra Filter; son stages.
+Storage sigue vacío (no hay cache).
+```
 
-1. `fact_lines` o `FileScan` / `Scan parquet` → de dónde salen las filas.
-2. `is_billable` o `gmv_line` o `channel_norm` o `PushedFilters` / `Filter` → tus `where`.
-3. `Project` → el `select` de cuatro columnas.
+**UI de este paso (aquí por fin hay dibujo):**
 
-Copia a Markdown **dos** líneas: una del scan y una del filtro. Con eso basta.
+1. Anota Job Id más alto (el de los pasos 1–2).
+2. Ejecuta la celda. En el notebook: un **entero**.
+3. Recarga **Jobs**. Hay **una fila nueva**. El más alto es el anterior **+1**. Description: `count` (el sitio del `NativeMethod…` da igual). Duration: irrelevante. Stages: `1/1` o `2/2` (el 2.º junta los recuentos parciales).
+4. Clic en **ese** Job Id (el nuevo, no uno viejo).
+   - “DAG Visualization”: cajas azules = **stages**, no cada operador. Nombres tipo *WholeStageCodegen*, *Exchange*, *count*. **No está mal que no ponga Filter.** Filter vive *dentro* de la etapa que lee.
+   - Si hay **dos** cajas unidas: una leyó y contó trozos; la otra sumó el total. La flecha / *Exchange* es el shuffle de ese count, no un join tuyo.
+5. Pestaña **SQL / DataFrame**. Una consulta nueva, misma duración grosera, asociada a ese job. Clic → Details.
+   - Aquí sí: *FileScan parquet* / *Scan*, *Filter* / *PushedFilters*, *Project*, y **HashAggregate** (porque `count` suma).
+   - Compáralo con el `explain` del paso 2: Scan y Filter son la misma receta. El Aggregate **extra** es el count (el explain de `planned` aún no sumaba: solo iba a producir filas).
+6. **Storage**: sigue vacío.
 
-`explain` no debe crear job nuevo.""",
-                """# Mapa, no viaje. Job Id no debería subir.
-planned.explain("formatted")""",
-                "Texto largo con Scan/FileScan y la ruta `fact_lines`. Los predicados de los `where` aparecen (en *Filter* o en *PushedFilters*). No sale el entero del count.",
-                "Si no ves `is_billable`, estás explain-ando **otro** DataFrame (uno sin ese `where`).",
+Si cada celda te crea un job, tienes un `.show()` de debug: coméntalo.""",
+                """# Viaje: abre fact_lines, aplica la receta, devuelve un entero
+n = planned.count()
+print("líneas cobrables web/app con GMV > 0 =", n)
+print("mira Jobs: una fila nueva. SQL: árbol Scan+Filter+Aggregate")""",
+                "Un entero **> 0**, varios cientos. Job Id **+1**. SQL muestra Scan y Filter. Storage vacío.",
+                "El entero no es la prueba. La prueba es la fila nueva en Jobs y que el árbol SQL cuadra con el explain del paso 2.",
             ),
         *prueba(
-                "Un where extra no lanza job",
-                "Encadena **otro** `where` **sin** `count`. Imprime el objeto y, si quieres, un `explain`. Luego mira Jobs.",
-                """# Transformación de más: el plan crece, el job no
-mas_estrecho = planned.where(col("gmv_line") > 50)
+                "Un `where` extra alarga la receta, no viaja",
+                """Sigue **sin** `count`. Copia:
+
+```
+Prueba. mas_estrecho = planned con gmv_line > 50.
+print me dio otro DataFrame[…], no un entero.
+Helper: planned no tiene por qué mencionar 50; mas_estrecho sí (gmv_line).
+Job Id igual que al terminar el paso 3 (___). No hay fila nueva.
+Si contara mas_estrecho, el n sería MENOR y nacería otro job: eso ya sería otro viaje.
+```
+
+**UI:** recarga Jobs **antes** y **después**. El más alto no cambia. SQL no añade consulta. El helper es el A/B: dos recetas, cero viajes.""",
+                """mas_estrecho = planned.where(col("gmv_line") > 50)
 print("sigue siendo un objeto:", mas_estrecho)
-# mas_estrecho.explain("formatted")  # opcional: un Filter/PushedFilters más
-print("si tienes UI: el Job Id más alto no cambia respecto al count del paso 2")""",
-                "Otro `DataFrame[...]`. Cero jobs nuevos. El count de `mas_estrecho` (si lo lanzas) será **menor** que el de `planned`; eso ya sería una acción nueva.",
+receta(planned, "planned (3 where)")
+receta(mas_estrecho, "mas_estrecho (4 where; GMV > 50)")
+print("Job Id: el de después del count. Si sube, has lanzado un count sin querer.")""",
+                "Dos bloques `sí/NO`. `mas_estrecho` sigue mostrando `gmv_line`. Job Id **igual** que al final del paso 3.",
             ),
         md(
             comprueba(
-                """Markdown en *tu* notebook con:
+                """Cierra con **este** bloque en Markdown (rellenado; no otro ensayo):
 
-- una frase: `print(planned)` no lee datos; `count()` sí; `explain` imprime el plan.
-- las **dos** líneas del explain (scan + filtro).
-- si usaste UI: Job Id antes del primer count vs después (solo sube con el count)."""
+```
+Escribir where no recorre el Parquet; alarga la receta.
+print enseña el objeto. explain enseña Scan/Filter sin viajar (Job Id ___ → ___ , igual).
+count sí viaja: filas = ___ ; Job Id ___ → ___ (+1).
+En Jobs el DAG son stages (no busqué Filter). En SQL vi Scan y Filter como en el explain.
+Storage vacío en todo el lab.
+Un where extra (gmv > 50) no creó job.
+```"""
             )
         ),
         *reto(
-                "formatted vs extended",
-                """`explain("formatted")` es el físico, legible. `explain(True)` (o `explain("extended")`) suelta **cuatro** capas: parsed → analyzed → optimized → physical. Más ruido.
+                "formatted vs el tocho extended (y dónde está en la UI)",
+                """`explain("formatted")` es el físico, el de clase. `explain(True)` suelta cuatro capas (parsed → analyzed → optimized → physical): más ruido. Quédate con **Physical Plan** / formatted.
 
-Ejecuta los dos. En el físico / formatted, ¿ves `PushedFilters` junto al FileScan? Eso es “el `where` se empujó al scan”. Anótalo.
+`PushedFilters` junto al FileScan = el `where` se empujó al scan.
 
-Si el filtro **no** aparece, lo pusiste *después* de un `select` que ya tiró la columna.""",
+En la UI: SQL → tu `count` → Details. Ese árbol es el físico **después** de viajar. El `explain` del paso 2 era el mismo tipo de árbol **antes** de viajar.""",
                 """print("===== formatted (el de clase) =====")
 planned.explain("formatted")
-print("===== extended (cuatro capas; busca Physical Plan y PushedFilters) =====")
+print("===== extended (busca Physical Plan y PushedFilters; ignora el resto) =====")
 planned.explain(True)""",
             ),
         md(
             errores(
                 [
-                    ("UI vacía / 404", "Puerto 4040 no reenviado o sesión en 4041", "Ports → 4040; o `spark.stop()` + `get_spark()`"),
-                    ("Cada celda crea un job", "Tienes un `show`/`count` de debug", "Coméntalo mientras mides"),
+                    ("UI vacía / 404", "4040 no reenviado, o la sesión está en 4041", "Ports → globo 4040; o `spark.stop()` + `get_spark()` y prueba 4041"),
+                    ("Job Id sube en print/explain", "`count`/`show` en la misma celda, o clicaste un job viejo y pensaste que era nuevo", "Quita acciones; compara el número *antes/después*, no el dibujo viejo"),
+                    ("En el DAG de Jobs no veo Filter", "Normal: esas cajas son stages", "Árbol con Filter: pestaña SQL, o el `explain` del notebook"),
+                    ("SQL vacío después del count", "No recargaste, o miras otra app (nombre ≠ novashop-m06)", "F5; comprueba el nombre arriba"),
+                    ("Storage con algo", "Cache de otra celda / de M06-02", "`spark.catalog.clearCache()`"),
+                    ("Cada celda crea un job", "`show` de debug", "Coméntalo mientras mides Jobs"),
                     ("Dos sesiones", "`SparkSession()` a mano", "Solo `get_spark()`"),
-                    ("explain peta AnalysisException", "Columna mal escrita", "El plan también resuelve nombres: corrige el typo"),
+                    ("explain → AnalysisException", "Columna mal escrita", "Para planificar también resuelve nombres: corrige el typo"),
                     ("No está fact_lines", "Saltaste M03", "`run_pipeline.py` o lab M03-02"),
                 ]
             )
